@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  base: &base
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile
+    tty: true
+    stdin_open: true
+    image: thesis:development
+    env_file: .env
+  app:
+    <<: *base
+    build:
+      context: ./
+      dockerfile: ./docker/app/dockerfiles/express.Dockerfile
+    image: thesis-express:development
+    volumes:
+      - ./:/usr/src/app
+      - node_modules:/usr/src/app/node_modules
+    depends_on: 
+      - postgres
+    ports:
+      - 3000:3000
+      - 9229:9229
+    env_file: .env
+    entrypoint: ./docker/app/entrypoints/express.sh
+    command: ['npm', 'start']
+  postgres:
+    image: postgres:13
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres:/data/postgres
+    environment:
+      - POSTGRES_DB=thesis
+      - POSTGRES_USER=thesis
+      - POSTGRES_PASSWORD=thesis2580
+
+volumes: 
+  postgres:
+  node_modules:
+
+networks:
+  default:
+    external:
+      name: fabric_test
