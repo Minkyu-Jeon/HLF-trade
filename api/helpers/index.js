@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken')
 const successResponse = (req, res, data, code = 200) => res.send({
   code,
   data,
@@ -18,7 +19,16 @@ const errorResponse = (
   success: false
 })
 
+const issueToken = (username, orgName, secret) => {
+  return jwt.sign({
+    exp: Math.floor(Date.now() / 1000) + parseInt(process.env.JWT_EXPIRATION),
+    username: username,
+    orgName: orgName,
+  }, secret)
+}
+
 module.exports = {
   successResponse: successResponse,
-  errorResponse: errorResponse
+  errorResponse: errorResponse,
+  issueToken: issueToken
 }

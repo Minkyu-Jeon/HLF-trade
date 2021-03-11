@@ -20,12 +20,6 @@ const UserController = () => {
     try {
       const userParams = { username: req.body.username, orgName: req.body.orgName };
 
-      const token = jwt.sign({
-        exp: Math.floor(Date.now() / 1000) + parseInt(process.env.JWT_EXPIRATION),
-        username: userParams.username,
-        orgName: userParams.orgName
-      }, req.app.get('secret'))
-
       const user = await new SignUp(userParams).signup()
 
       return helper.successResponse(req, res, user)
