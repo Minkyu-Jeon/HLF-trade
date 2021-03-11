@@ -40,7 +40,7 @@ app.use((req, res, next) => {
   }
   const token = req.token
 
-  jwt.verify(token, app.get('secret'), (err, decode) => {
+  jwt.verify(token, app.get('secret'), (err, decoded) => {
     if ( err ) {
       console.log(`Error ===================: ${err}`)
       errorResponse(req, res, 'Fail to authenticate token', 0)
