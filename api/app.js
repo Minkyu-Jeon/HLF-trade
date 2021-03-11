@@ -8,7 +8,6 @@ const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const walletsRouter = require('./routes/wallets');
 const sessionsRouter = require('./routes/sessions');
 const errorHandler = require('./middleware/errorHandler');
 const { errorResponse } = require('./helpers');
@@ -56,7 +55,6 @@ app.use((req, res, next) => {
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/sessions', sessionsRouter);
-app.use('/wallets', walletsRouter);
 app.use(errorHandler)
 
 module.exports = app;
