@@ -7,6 +7,14 @@ const signUp = {
   }
 }
 
+const signUpPKI = {
+  body: {
+    username: Joi.string().required(),
+    orgName: Joi.string().required()
+  }
+}
+
 module.exports = {
-  signUp: signUp
+  signUp: signUp,
+  signUpPKI, signUpPKI
 }

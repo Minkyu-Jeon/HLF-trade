@@ -106,6 +106,8 @@ dist
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
+wallets
+
 artifacts/channel/mychannel.tx
 genesis.block
 artifacts/channel/Org1MSPanchors.tx

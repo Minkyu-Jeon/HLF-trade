@@ -35,6 +35,7 @@ exports.buildWallet = async (Wallets, walletPath) => {
 		wallet = await Wallets.newInMemoryWallet();
 		console.log('Built an in memory wallet');
 	}
+	console.log(wallet)
 
 	return wallet;
 };

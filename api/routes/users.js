@@ -7,10 +7,16 @@ const UserValidator = require('../controllers/user/user.validator')
 const router = express.Router();
 
 /* POST users creating. */
+// router.post(
+//   '/', 
+//   validate(UserValidator.signUp), 
+//   UserController.signUp,
+// );
+
 router.post(
   '/', 
-  validate(UserValidator.signUp), 
-  UserController.signUp,
+  validate(UserValidator.signUpPKI), 
+  UserController.signUpPKI,
 );
 
 

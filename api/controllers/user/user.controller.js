@@ -2,6 +2,7 @@
 
 const SignUp = require('../../services/SignUp')
 const helper = require('../../helpers')
+const jwt = require('jsonwebtoken')
 
 const UserController = () => {
   const signUp = async (req, res, next) => {
@@ -15,8 +16,27 @@ const UserController = () => {
     }
   }
 
+  const signUpPKI = async (req, res, next) => {
+    try {
+      const userParams = { username: req.body.username, orgName: req.body.orgName };
+
+      const token = jwt.sign({
+        exp: Math.floor(Date.now() / 1000) + parseInt(process.env.JWT_EXPIRATION),
+        username: userParams.username,
+        orgName: userParams.orgName
+      }, req.app.get('secret'))
+
+      const user = await new SignUp(userParams).signup()
+
+      return helper.successResponse(req, res, user)
+    } catch ( err ) {
+      return helper.errorResponse(req, res, [err.message], 400, err)
+    }
+  }
+
   return {
-    signUp: signUp
+    signUp: signUp,
+    signUpPKI, signUpPKI
   }
 }
 

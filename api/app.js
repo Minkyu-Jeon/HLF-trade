@@ -1,29 +1,62 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const path = require('path');
+const bearerToken = require('express-bearer-token')
+const expressJWT = require('express-jwt')
+const jwt = require('jsonwebtoken')
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const walletsRouter = require('./routes/wallets');
 const sessionsRouter = require('./routes/sessions');
-const apiAuthMiddleware = require('./middleware/apiAuth')
-const errorHandler = require('./middleware/errorHandler')
+const errorHandler = require('./middleware/errorHandler');
+const { errorResponse } = require('./helpers');
 
 require('./models/index')
 
-var app = express();
+const app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const skipAuthPaths = ['/users', '/sessions']
+// set secret constiable
+app.set('secret', process.env.EXPRESS_SECRET_KEY_BASE)
+app.use(expressJWT({
+  secret: process.env.EXPRESS_SECRET_KEY_BASE,
+  algorithms: ['HS256']
+}).unless({
+  path: skipAuthPaths
+}))
+app.use(bearerToken())
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+  if ( skipAuthPaths.includes(req.originalUrl) ) {
+    return next()
+  }
+  const token = req.token
+
+  jwt.verify(token, app.get('secret'), (err, decode) => {
+    if ( err ) {
+      console.log(`Error ===================: ${err}`)
+      errorResponse(req, res, 'Fail to authenticate token', 0)
+      return;
+    }
+
+    req.username = decoded.username;
+    req.orgname = decoded.orgName;
+    return next()
+  })
+})
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/sessions', sessionsRouter);
-app.use('/wallets', apiAuthMiddleware, walletsRouter);
+app.use('/wallets', walletsRouter);
 app.use(errorHandler)
 
 module.exports = app;
