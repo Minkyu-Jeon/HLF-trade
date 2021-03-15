@@ -25,5 +25,11 @@ router.get(
   AssetController.show
 )
 
+// update a asset
+router.put(
+  '/:channelName/:chainCodeName/:id',
+  AssetController.update
+)
+
 
 module.exports = router;
