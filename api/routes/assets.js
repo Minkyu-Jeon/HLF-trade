@@ -13,5 +13,17 @@ router.post(
   AssetController.register,
 );
 
+// Get all the assets
+router.get(
+  '/:channelName/:chainCodeName', 
+  AssetController.index,
+);
+
+// Get a asset
+router.get(
+  '/:channelName/:chainCodeName/:id',
+  AssetController.show
+)
+
 
 module.exports = router;
