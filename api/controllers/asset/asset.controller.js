@@ -22,21 +22,21 @@ const AssetController = () => {
         await gateway.connect(ccp, {
           wallet: wallet,
           identity: req.username,
-          discovery: { enabled: true, asLocalhost: true }
+          discovery: { enabled: true, asLocalhost: false }
         })
 
-        console.log(req.body.channelName)
         const network = await gateway.getNetwork(req.body.channelName)
 
-        const contract = network.getContract(req.body.chaincodeName)
+        const contract = network.getContract(req.body.chainCodeName)
 
-        const createAssetParams = [req.body.id, req.body.color, req.body.size, req.body.owner, req.body.apprisedValue]
+        const createAssetParams = [req.body.id, req.body.color, req.body.size, req.body.owner, req.body.appraisedValue]
 
-        result = await contract.evaluateTransaction('CreateAsset', ...createAssetParams)
+        result = await contract.submitTransaction('CreateAsset', ...createAssetParams)
         console.log('*** Result: committed')
         if ( `${result}` !== '' ) {
           console.log(`*** Result: ${result.toString()}`)
         }
+        result = JSON.parse(result.toString())
       } catch (err) {
         console.log(err)
       }
