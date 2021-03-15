@@ -31,5 +31,10 @@ router.put(
   AssetController.update
 )
 
+router.delete(
+  '/:channelName/:chainCodeName/:id',
+  AssetController.destroy
+)
+
 
 module.exports = router;
