@@ -5,15 +5,7 @@ const { Contract } = require('fabric-contract-api');
 class AssetTransfer extends Contract {
 
   async InitLedger(ctx) {
-    const assets = [
-      {
-        ID: 'asset1',
-        Color: 'blue',
-        Size: 5,
-        Owner: 'Tomoko',
-        AppraisedValue: 300,
-      },
-    ];
+    const assets = [];
 
     for (const asset of assets) {
       asset.docType = 'asset';
