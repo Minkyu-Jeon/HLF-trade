@@ -6,6 +6,46 @@ const helper = require('../../helpers')
 const { buildCCPOrg, buildWallet } = require('../../utils/AppUtil')
 
 const AssetController = () => {
+  const transfer = async (req, res, next) => {
+    let result
+    try {
+      const ccp = buildCCPOrg(['../', 'config', 'connection-org1.json'])
+
+      const walletPath = path.join(process.cwd(), 'wallets')
+      
+      const wallet = await buildWallet(Wallets, walletPath)
+
+      const gateway = new Gateway()
+
+      try {
+        await gateway.connect(ccp, {
+          wallet: wallet,
+          identity: req.username,
+          discovery: { enabled: true, asLocalhost: false }
+        })
+
+        const network = await gateway.getNetwork(req.params.channelName)
+
+        const contract = network.getContract(req.params.chainCodeName)
+
+        result = await contract.submitTransaction('TransferAsset', req.params.id, req.body.newOwner)
+        console.log('*** Result: committed')
+        if ( `${result}` !== '' ) {
+          console.log(`*** Result: ${result.toString()}`)
+        }
+        result = JSON.parse(result.toString())
+      } catch (err) {
+        throw new Error(err.message)
+      }
+       finally {
+        gateway.disconnect()
+      }
+    } catch (err) {
+      return helper.errorResponse(req, res, [err.message], 400, err)
+    }
+    return helper.successResponse(req, res, result, 0)
+  }
+
   const destroy = async (req, res, next) => {
     let result
     try {
@@ -216,7 +256,8 @@ const AssetController = () => {
     index: index,
     show: show,
     update: update,
-    destroy: destroy
+    destroy: destroy,
+    transfer: transfer
   }
 }
 

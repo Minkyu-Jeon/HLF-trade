@@ -36,5 +36,10 @@ router.delete(
   AssetController.destroy
 )
 
+router.post(
+  '/:channelName/:chainCodeName/:id',
+  AssetController.transfer
+)
+
 
 module.exports = router;
