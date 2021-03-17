@@ -19,11 +19,12 @@ const errorResponse = (
   success: false
 })
 
-const issueToken = (username, orgName, secret) => {
+const issueToken = (id, email, orgName, secret) => {
   return jwt.sign({
     exp: Math.floor(Date.now() / 1000) + parseInt(process.env.JWT_EXPIRATION),
-    username: username,
-    orgName: orgName,
+    id: email,
+    email: email,
+    orgName: orgName
   }, secret)
 }
 

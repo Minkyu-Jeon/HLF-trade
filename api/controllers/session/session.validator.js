@@ -2,8 +2,8 @@ const Joi = require('joi')
 
 const login = {
   body: {
-    username: Joi.string().required(),
-    orgName: Joi.string().required()
+    email: Joi.string().required(),
+    password: Joi.string().required()
   }
 }
 
