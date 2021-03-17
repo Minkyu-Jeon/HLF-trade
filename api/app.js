@@ -52,8 +52,11 @@ app.use(async (req, res, next) => {
       return 
     }
 
-    req.username = decoded.username;
-    req.orgname = decoded.orgName;
+    req.user = {
+      id: decoded.id,
+      email: decoded.email,
+      orgName: decoded.orgName
+    }
   })
 
   if ( ! result ) {

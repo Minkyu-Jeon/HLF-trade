@@ -1,6 +1,7 @@
 'use strict'
 
 const SignUp = require('../../services/SignUp')
+const EnrollUser = require('../../services/EnrollUser')
 const helper = require('../../helpers')
 
 const UserController = () => {
@@ -22,8 +23,19 @@ const UserController = () => {
     }
   }
 
+  const enroll = async (req, res, next) => {
+    try {
+      const result = await new EnrollUser(req.user, req.body.orgName).enroll()
+
+      return helper.successResponse(req, res, result)
+    } catch ( err ) {
+      return helper.errorResponse(req, res, [err.message], 400, err)
+    }
+  }
+
   return {
-    signUp: signUp
+    signUp: signUp,
+    enroll: enroll
   }
 }
 

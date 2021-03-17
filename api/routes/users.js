@@ -13,4 +13,9 @@ router.post(
   UserController.signUp,
 );
 
+router.post(
+  '/enroll',
+  UserController.enroll
+)
+
 module.exports = router;
