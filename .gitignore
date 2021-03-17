@@ -108,3 +108,5 @@ dist
 
 api/wallets/*
 !./api/wallets/.gitkeep
+
+api/config/connection-*
