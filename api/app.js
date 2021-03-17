@@ -11,7 +11,7 @@ const logger = require('morgan');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const sessionsRouter = require('./routes/sessions');
-const assetsRouter = require('./routes/assets');
+const usedThingsRouter = require('./routes/usedThings');
 const errorHandler = require('./middleware/errorHandler');
 const { errorResponse } = require('./helpers');
 
@@ -69,7 +69,7 @@ app.use(async (req, res, next) => {
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/sessions', sessionsRouter);
-app.use('/assets', assetsRouter);
+app.use('/used_things', usedThingsRouter);
 app.use(errorHandler)
 
 module.exports = app;

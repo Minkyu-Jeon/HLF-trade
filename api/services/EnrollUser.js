@@ -26,7 +26,7 @@ class EnrollUser {
       return this.userParams
     }
 
-    await CAUtil.registerAndEnrollUser(caClient, wallet, this.orgName, this.userParams.email, this.getAffiliation())
+    await CAUtil.registerAndEnrollUser(caClient, wallet, `${this.orgName}MSP`, this.userParams.email, this.getAffiliation())
 
     return this.userParams
   }
