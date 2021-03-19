@@ -6,6 +6,7 @@ const helper = require('../../helpers')
 const { buildCCPOrg, buildWallet } = require('../../utils/AppUtil')
 const channelName = 'mychannel'
 const chainCodeName = 'used_thing_cc'
+const db = require('../../models')
 
 const UsedThingController = () => {
 
@@ -141,11 +142,61 @@ const UsedThingController = () => {
 
     return helper.successResponse(req, res, result, 0)
   }
+  
+  const buyRequest = (req, res, next) => {
+    let result
+
+    try {
+      const ccp = buildCCPOrg(['../', 'config', 'connection-org1.json'])
+
+      const walletPath = path.join(process.cwd(), 'wallets')
+      
+      const wallet = await buildWallet(Wallets, walletPath)
+
+      const gateway = new Gateway()
+
+      try {
+        await gateway.connect(ccp, {
+          wallet: wallet,
+          identity: req.user.email,
+          discovery: { enabled: true, asLocalhost: false }
+        })
+
+        const network = await gateway.getNetwork(channelName)
+
+        const contract = network.getContract(chainCodeName)
+        
+        const user = await db.User.findOne({ where: { id: req.user.id } })
+        const params = [
+          req.body.id,
+          req.user.id,
+          user.address
+        ]
+
+        result = await contract.submitTransaction('BuyRequestAsset', ...params)
+        console.log('*** Result: committed')
+        if ( `${result}` !== '' ) {
+          console.log(`*** Result: ${result.toString()}`)
+        }
+        result = JSON.parse(result.toString())
+      } catch (err) {
+        throw err
+      }
+       finally {
+        gateway.disconnect()
+      }
+    } catch (err) {
+      return helper.errorResponse(req, res, [err.message], 400, err)
+    }
+
+    return helper.successResponse(req, res, result, 0)
+  }
 
   return {
     register: register,
     index: index,
     show: show,
+    buyRequest: buyRequest
   }
 }
 

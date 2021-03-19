@@ -1,6 +1,7 @@
 'use strict';
 
 const { Contract } = require('fabric-contract-api');
+const UsedThing = require('./UsedThing')
 
 class UsedThingChainCode extends Contract {
 
@@ -9,7 +10,7 @@ class UsedThingChainCode extends Contract {
   }
 
   async CreateAsset(ctx, id, category, title, product_name, image_url, description, price, seller) {
-    const asset = {
+    const asset = new UsedThing({
       docType: 'used_thing',
       Title: title,
       ProductName: product_name,
@@ -19,7 +20,7 @@ class UsedThingChainCode extends Contract {
       Price: price,
       Seller: seller,
       SellingState: 'registered'
-    };
+    });
     ctx.stub.putState(id, Buffer.from(JSON.stringify(asset)));
 
     return JSON.stringify(asset);
@@ -36,6 +37,13 @@ class UsedThingChainCode extends Contract {
   async assetExists(ctx, id) {
     const assetJSON = await ctx.stub.getState(id);
     return assetJSON && assetJSON.length > 0;
+  }
+
+  async BuyRequestAsset(ctx, id, user_id, address) {
+    const asset = JSON.parse(this.Show(ctx, id))
+    asset.SettingState = 'buy_requested'
+    
+    return ctx.stub.putState(id, Buffer.from(JSON.stringify(asset)));
   }
 
   async GetAllAssets(ctx) {

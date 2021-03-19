@@ -31,5 +31,5 @@ const issueToken = (id, email, orgName, secret) => {
 module.exports = {
   successResponse: successResponse,
   errorResponse: errorResponse,
-  issueToken: issueToken
+  issueToken: issueToken,
 }

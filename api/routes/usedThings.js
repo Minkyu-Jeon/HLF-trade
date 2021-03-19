@@ -36,10 +36,10 @@ router.get(
 //   UsedThingController.destroy
 // )
 
-// router.post(
-//   '/:channelName/:chainCodeName/:id',
-//   UsedThingController.transfer
-// )
+router.post(
+  '/:id/buy_request',
+  UsedThingController.buyRequest
+)
 
 
 module.exports = router;
