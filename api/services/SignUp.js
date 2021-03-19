@@ -13,7 +13,7 @@ class SignUp {
     }
 
     const newUser = await db.User.create(this.userParams)
-    return { user: newUser.toJSON(), result: true }
+    return { user: newUser.toJSON() }
   }
 }
 
