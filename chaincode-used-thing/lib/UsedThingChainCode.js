@@ -10,28 +10,33 @@ class UsedThingChainCode extends Contract {
   }
 
   async CreateAsset(ctx, id, category, title, product_name, image_url, description, price, seller) {
-    const asset = new UsedThing({
-      docType: 'used_thing',
-      Title: title,
-      ProductName: product_name,
-      Category: category,
-      ImageUrl: image_url,
-      Description: description,
-      Price: price,
-      Seller: seller,
-      SellingState: 'registered'
-    });
-    ctx.stub.putState(id, Buffer.from(JSON.stringify(asset)));
+    const asset = UsedThing.createInstance(
+      seller,
+      title,
+      product_name,
+      category,
+      image_url,
+      description,
+      price,
+    );
 
-    return JSON.stringify(asset);
+    ctx.stub.putState(id, asset.toBuffer());
+
+    return asset;
   }
 
-  async Show(ctx, id) {
+  async Get(ctx, id) {
     const assetJSON = await ctx.stub.getState(id); 
     if (!assetJSON || assetJSON.length === 0) {
       throw new Error(`The asset ${id} does not exist`);
     }
-    return assetJSON.toString();
+    const asset = UsedThing.fromBuffer(assetJSON)
+    return asset;
+  }
+
+  async Show(ctx, id) {
+    const asset = this.Get(ctx, id)
+    return asset.toBuffer();
   }
 
   async assetExists(ctx, id) {
@@ -39,11 +44,32 @@ class UsedThingChainCode extends Contract {
     return assetJSON && assetJSON.length > 0;
   }
 
-  async BuyRequestAsset(ctx, id, user_id, address) {
-    const asset = JSON.parse(this.Show(ctx, id))
-    asset.SettingState = 'buy_requested'
+  async BuyRequestAsset(ctx, id) {
+    const asset = this.Get(ctx, id)
+    asset.setBuyRequested();
     
-    return ctx.stub.putState(id, Buffer.from(JSON.stringify(asset)));
+    return ctx.stub.putState(id, asset.toBuffer());
+  }
+
+  async SendAsset(ctx, id) {
+    const asset = this.Get(ctx, id)
+    asset.setSent();
+    
+    return ctx.stub.putState(id, asset.toBuffer());
+  }
+  
+  async ReceiveAsset(ctx, id) {
+    const asset = this.Get(ctx, id)
+    asset.setReceived()
+    
+    return ctx.stub.putState(id, asset.toBuffer());
+  }
+
+  async ConfirmAsset(ctx, id) {
+    const asset = this.Get(ctx, id)
+    asset.setConfirmed()
+    
+    return ctx.stub.putState(id, asset.toBuffer());
   }
 
   async GetAllAssets(ctx) {
@@ -60,7 +86,7 @@ class UsedThingChainCode extends Contract {
         console.log(err);
         record = strValue;
       }
-      allResults.push({ Key: result.value.key, Record: record });
+      allResults.push( Object.assign({ id: result.value.key }, record) );
       result = await iterator.next();
     }
     return JSON.stringify(allResults);

@@ -143,7 +143,7 @@ const UsedThingController = () => {
     return helper.successResponse(req, res, result, 0)
   }
   
-  const buyRequest = (req, res, next) => {
+  const buyRequest = async (req, res, next) => {
     let result
 
     try {

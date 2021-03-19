@@ -7,10 +7,9 @@ const State = require('./../ledger-api/state.js');
 const utState = {
   REGISTERED: 1,
   BUY_REQUESTED: 2,
-  PACKAGED: 3,
-  SENT: 4,
-  ARRIVED: 5,
-  FINISHED: 6
+  SENT: 3,
+  ARRIVED: 4,
+  CONFIRMED: 5
 };
 
 /**
@@ -20,14 +19,50 @@ const utState = {
 class UsedThing extends State {
 
   constructor(obj) {
-    super(UsedThing.getClass(), [obj.issuer, obj.paperNumber]);
+    super(UsedThing.getClass(), [obj.Seller, obj.ProductName]);
+    this.currentState = this.currentState || utState.REGISTERED
     Object.assign(this, obj);
   }
 
   /**
    * Basic getters and setters
   */
-  
+
+  getSeller() {
+    return this.Seller
+  }
+
+  setSeller(seller) {
+    this.Seller = seller
+  }
+
+  getBuyer() {
+    return this.Buyer
+  }
+
+  setBuyer(buyer) {
+    this.Buyer = buyer
+  }
+
+  setRegistered() {
+    this.currentState = utState.REGISTERED
+  }
+
+  setBuyRequested() {
+    this.currentState = utState.BUY_REQUESTED
+  }
+
+  setSent() {
+    this.currentState = utState.SENT
+  }
+
+  setArrived() {
+    this.currentState = utState.ARRIVED
+  }
+
+  setConfirmed() {
+    this.currentState = utState.CONFIRMED
+  }
 
   isRegistered() {
     return this.currentState === utState.REGISTERED;
@@ -35,10 +70,6 @@ class UsedThing extends State {
 
   isBuyRequested() {
     return this.currentState === utState.BUY_REQUESTED;
-  }
-
-  isPackaged() {
-    return this.currentState === utState.PACKAGED;
   }
 
   isSent() {
@@ -49,8 +80,8 @@ class UsedThing extends State {
     return this.currentState === utState.ARRIVED;
   }
 
-  isFinished() {
-    return this.currentState === utState.FINISHED;
+  isConfirmed() {
+    return this.currentState === utState.CONFIRMED;
   }
 
   static fromBuffer(buffer) {
@@ -72,8 +103,8 @@ class UsedThing extends State {
   /**
    * Factory method to create a used thing object
    */
-  static createInstance(issuer, paperNumber, issueDateTime, maturityDateTime, faceValue) {
-    return new UsedThing({ issuer, paperNumber, issueDateTime, maturityDateTime, faceValue });
+  static createInstance(Seller, Title, ProductName, Category, ImageUrl, Description, Price) {
+    return new UsedThing({ Seller, Title, ProductName, Category, ImageUrl, Description, Price });
   }
 
   static getClass() {
