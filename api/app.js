@@ -60,7 +60,7 @@ app.use(async (req, res, next) => {
   })
 
   if ( ! result ) {
-    errorResponse(req, res, error.name, 200)
+    errorResponse(req, res, error.name, 401)
   }
 
   return next()
