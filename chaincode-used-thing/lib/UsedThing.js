@@ -44,6 +44,14 @@ class UsedThing extends State {
     this.Buyer = buyer
   }
 
+  setAddress(encryptedAddress) {
+    this.Address = encryptedAddress
+  }
+
+  getAddress(decryptor, private_key) {
+    return decryptor.decrypt(this.Address, private_key)
+  }
+
   setRegistered() {
     this.currentState = utState.REGISTERED
   }

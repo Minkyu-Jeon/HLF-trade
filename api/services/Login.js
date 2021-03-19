@@ -30,7 +30,7 @@ class Login {
       orgName = userIdentity.mspId
     }
 
-    const token = helper.issueToken(this.loginParams.id, this.loginParams.email, orgName, this.secret)
+    const token = helper.issueToken(user.id, this.loginParams.email, orgName, this.secret)
 
     const userData = Object.assign(user.toJSON(), ({token: token}))
 

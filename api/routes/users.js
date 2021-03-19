@@ -1,5 +1,6 @@
 const express = require('express');
-const validate = require('express-validation')
+const validate = require('express-validation');
+const UsedThingController = require('../controllers/used_thing/used_thing.controller');
 
 const UserController = require('../controllers/user/user.controller')
 const UserValidator = require('../controllers/user/user.validator')
@@ -16,6 +17,16 @@ router.post(
 router.post(
   '/enroll',
   UserController.enroll
+)
+
+router.get(
+  '/:id/used_things/sellings',
+  UsedThingController.selling
+)
+
+router.get(
+  '/:id/used_things/buyings',
+  UsedThingController.buying
 )
 
 module.exports = router;

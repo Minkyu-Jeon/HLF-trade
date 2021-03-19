@@ -2,7 +2,6 @@ const Joi = require('joi')
 
 const register = {
   body: {
-    id: Joi.string().required(),
     category: Joi.string().required(),
     title: Joi.string().required(),
     product_name: Joi.string().required(),
