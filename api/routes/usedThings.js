@@ -25,21 +25,24 @@ router.get(
   UsedThingController.show
 )
 
-// // update a UsedThing
-// router.put(
-//   '/:channelName/:chainCodeName/:id',
-//   UsedThingController.update
-// )
-
-// router.delete(
-//   '/:channelName/:chainCodeName/:id',
-//   UsedThingController.destroy
-// )
-
 router.post(
   '/:id/buy_request',
   UsedThingController.buyRequest
 )
 
+router.post(
+  '/:id/send',
+  UsedThingController.sendThing
+)
+
+router.post(
+  '/:id/receive',
+  UsedThingController.receiveThing
+)
+
+router.post(
+  '/:id/confirm',
+  UsedThingController.confirmThing
+)
 
 module.exports = router;
