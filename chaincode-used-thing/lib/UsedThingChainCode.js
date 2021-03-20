@@ -65,33 +65,61 @@ class UsedThingChainCode extends Contract {
     
     asset.setBuyer(buyer)
     
-    const result = await ctx.stub.putState(key, State.serialize(asset));
-
-    return result
+    return await ctx.stub.putState(key, State.serialize(asset));
   }
 
   async SendAsset(ctx, id) {
-    const asset = this.Get(ctx, id)
+    const key = ctx.stub.createCompositeKey(UsedThing.getClass(), [id])
+    const asset = await this.Get(ctx, key)
+    const currentUser = ctx.clidentIdentity.getID()
+
+    if ( !asset.isBuyRequested() ) {
+      throw new Error(`currentState must be buy_requested`)
+    }
+
+    if ( asset.getSeller() != currentUser ) {
+      throw new Error(`only seller invoke this contract`)
+    }
 
     asset.setSent();
     
-    return await ctx.stub.putState(id, asset.toBuffer());
+    return await ctx.stub.putState(key, State.serialize(asset));
   }
   
   async ReceiveAsset(ctx, id) {
-    const asset = this.Get(ctx, id)
+    const key = ctx.stub.createCompositeKey(UsedThing.getClass(), [id])
+    const asset = await this.Get(ctx, key)
+    const currentUser = ctx.clidentIdentity.getID()
+
+    if ( !asset.isSent() ) {
+      throw new Error(`currentState must be sent`)
+    }
+
+    if ( asset.getBuyer() != currentUser ) {
+      throw new Error(`only buyer invoke this contract`)
+    }
 
     asset.setReceived()
     
-    return await ctx.stub.putState(id, asset.toBuffer());
+    return await ctx.stub.putState(key, State.serialize(asset));
   }
 
   async ConfirmAsset(ctx, id) {
-    const asset = this.Get(ctx, id)
+    const key = ctx.stub.createCompositeKey(UsedThing.getClass(), [id])
+    const asset = await this.Get(ctx, key)
+    const currentUser = ctx.clidentIdentity.getID()
+
+    if ( !asset.isReceived() ) {
+      throw new Error(`currentState must be received`)
+    }
+
+    if ( asset.getBuyer() != currentUser ) {
+      throw new Error(`only buyer invoke this contract`)
+    }
 
     asset.setConfirmed()
     
-    return await ctx.stub.putState(id, asset.toBuffer());
+    return await ctx.stub.putState(key, State.serialize(asset));
   }
 
   async GetAllAssetsByState(ctx, state) {
