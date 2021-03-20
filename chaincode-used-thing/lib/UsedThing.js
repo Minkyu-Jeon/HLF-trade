@@ -8,7 +8,7 @@ const utState = {
   REGISTERED: 1,
   BUY_REQUESTED: 2,
   SENT: 3,
-  ARRIVED: 4,
+  RECEIVED: 4,
   CONFIRMED: 5
 };
 
@@ -64,8 +64,8 @@ class UsedThing extends State {
     this.currentState = utState.SENT
   }
 
-  setArrived() {
-    this.currentState = utState.ARRIVED
+  setReceived() {
+    this.currentState = utState.RECEIVED
   }
 
   setConfirmed() {
@@ -84,8 +84,8 @@ class UsedThing extends State {
     return this.currentState === utState.SENT;
   }
 
-  isArrived() {
-    return this.currentState === utState.ARRIVED;
+  isReceived() {
+    return this.currentState === utState.RECEIVED;
   }
 
   isConfirmed() {

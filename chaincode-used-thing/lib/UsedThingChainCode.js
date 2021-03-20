@@ -71,7 +71,9 @@ class UsedThingChainCode extends Contract {
   async SendAsset(ctx, id) {
     const key = ctx.stub.createCompositeKey(UsedThing.getClass(), [id])
     const asset = await this.Get(ctx, key)
-    const currentUser = ctx.clidentIdentity.getID()
+    const currentUser = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
+
+    console.log(`currentUser: ${currentUser}`)
 
     if ( !asset.isBuyRequested() ) {
       throw new Error(`currentState must be buy_requested`)
@@ -89,7 +91,7 @@ class UsedThingChainCode extends Contract {
   async ReceiveAsset(ctx, id) {
     const key = ctx.stub.createCompositeKey(UsedThing.getClass(), [id])
     const asset = await this.Get(ctx, key)
-    const currentUser = ctx.clidentIdentity.getID()
+    const currentUser = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
 
     if ( !asset.isSent() ) {
       throw new Error(`currentState must be sent`)
@@ -107,7 +109,7 @@ class UsedThingChainCode extends Contract {
   async ConfirmAsset(ctx, id) {
     const key = ctx.stub.createCompositeKey(UsedThing.getClass(), [id])
     const asset = await this.Get(ctx, key)
-    const currentUser = ctx.clidentIdentity.getID()
+    const currentUser = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
 
     if ( !asset.isReceived() ) {
       throw new Error(`currentState must be received`)
