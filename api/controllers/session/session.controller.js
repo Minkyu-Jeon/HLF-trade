@@ -10,6 +10,8 @@ const SessionController = () => {
       
       const result = await new Login(loginParams, req.app.get('secret')).login()
 
+      res.cookie('x_auth', result.token)
+
       return helpers.successResponse(req, res, result, 200)
 
     } catch ( err ) {
@@ -21,6 +23,8 @@ const SessionController = () => {
     const user = await db.User.findOne({ where: { id: req.user.id } })
 
     const token = helpers.issueToken(req.user.id, req.user.email, req.user.orgName, req.app.get('secret'))
+
+    res.cookie('x_auth', token)
 
     const result = {
       user: user,

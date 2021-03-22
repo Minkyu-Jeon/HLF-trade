@@ -40,7 +40,7 @@ app.use(async (req, res, next) => {
   if ( skipAuthPaths.includes(`${req.originalUrl}`) ) {
     return next()
   }
-  const token = req.token
+  const token = req.token || req.cookies.x_auth
   let result = true
   let error;
 
@@ -59,7 +59,7 @@ app.use(async (req, res, next) => {
     }
   })
 
-  if ( ! result ) {
+  if ( !result ) {
     errorResponse(req, res, error.name, 401)
   }
 
