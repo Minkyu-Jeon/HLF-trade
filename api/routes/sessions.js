@@ -16,6 +16,10 @@ router.get(
   '/info',
   SessionController.info
 );
+router.delete(
+  '/logout',
+  SessionController.logout
+);
 
 
 module.exports = router;

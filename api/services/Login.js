@@ -3,6 +3,7 @@ const helper = require('../helpers')
 const AppUtil = require('../utils/AppUtil')
 const { Wallets } = require('fabric-network');
 const path = require('path')
+const crypto = require('crypto')
 
 class Login {
   constructor(loginParams, secret) {
@@ -30,11 +31,23 @@ class Login {
       orgName = userIdentity.mspId
     }
 
-    const token = helper.issueToken(user.id, this.loginParams.email, orgName, this.secret)
+    let userTokenString;
+    do {
+      userTokenString = crypto.randomBytes(64).toString('hex')
+    } while ( await db.UserToken.findOne({ where: { token: userTokenString } }) !== null )
 
-    const userData = Object.assign(user.toJSON(), ({token: token}))
+    let userToken = await db.UserToken.findOne({ where: { user_id: user.id } })
+    if ( userToken === null ) {
+      userToken = db.UserToken.build({ user_id: user.id })
+    }
+    userToken.token = userTokenString
+    await userToken.save()
 
-    return { user: this.serializeResult(userData), token: token }
+    const JWTtoken = helper.issueToken(user.id, this.loginParams.email, userTokenString, orgName, this.secret)
+
+    const userData = Object.assign(user.toJSON(), ({token: JWTtoken}))
+
+    return { user: this.serializeResult(userData), token: JWTtoken }
   }
 
   serializeResult(data) {

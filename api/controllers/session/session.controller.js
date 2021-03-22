@@ -22,7 +22,13 @@ const SessionController = () => {
   const info = async(req, res, next) => {
     const user = await db.User.findOne({ where: { id: req.user.id } })
 
-    const token = helpers.issueToken(req.user.id, req.user.email, req.user.orgName, req.app.get('secret'))
+    const token = helpers.issueToken(
+      req.user.id, 
+      req.user.email, 
+      req.user.userTokenString, 
+      req.user.orgName, 
+      req.app.get('secret')
+    )
 
     res.cookie('x_auth', token)
 
@@ -34,9 +40,20 @@ const SessionController = () => {
     return helpers.successResponse(req, res, result, 200)
   }
 
+  const logout = async(req, res, next) => {
+    await db.UserToken.destroy({
+      where: {
+        user_id: req.user.id
+      }
+    })
+
+    return helpers.successResponse(req, res, true, 200)
+  }
+
   return {
     login: login,
-    info: info 
+    info: info,
+    logout: logout
   }
 }
 

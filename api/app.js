@@ -14,8 +14,9 @@ const sessionsRouter = require('./routes/sessions');
 const usedThingsRouter = require('./routes/usedThings');
 const errorHandler = require('./middleware/errorHandler');
 const { errorResponse } = require('./helpers');
+const { decode } = require('punycode');
 
-require('./models/index')
+const db = require('./models/index')
 
 const app = express();
 
@@ -44,23 +45,33 @@ app.use(async (req, res, next) => {
   let result = true
   let error;
 
-  jwt.verify(token, app.get('secret'), (err, decoded) => {
+  await jwt.verify(token, app.get('secret'), async (err, decoded) => {
     if ( err ) {
       result = false
       error = err
       console.log(`Error ===================: ${err}`)
       return 
     }
+    
+    const userToken = await db.UserToken.findOne({ where: { token: decoded.userTokenString } })
+    if ( userToken === null ) {
+      result = false
+      error = {
+        name: 'token invalid error'
+      }
+      return
+    }
 
     req.user = {
       id: decoded.id,
+      userTokenString: decoded.userTokenString,
       email: decoded.email,
       orgName: decoded.orgName
     }
   })
 
   if ( !result ) {
-    errorResponse(req, res, error.name, 401)
+    return errorResponse(req, res, error.name, 401)
   }
 
   return next()
