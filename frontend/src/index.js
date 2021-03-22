@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { composeWithDevTools } from 'redux-devtools-extension';
+import 'antd/dist/antd.css'
 
 ReactDOM.render(
   <React.StrictMode>
