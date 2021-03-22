@@ -12,6 +12,10 @@ router.post(
   validate(SessionValidator.login),
   SessionController.login
 );
+router.get(
+  '/info',
+  SessionController.info
+);
 
 
 module.exports = router;

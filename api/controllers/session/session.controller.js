@@ -1,5 +1,6 @@
 'use strict'
 const Login = require('../../services/Login')
+const db = require('../../models')
 const helpers = require('../../helpers')
 
 const SessionController = () => {
@@ -16,8 +17,22 @@ const SessionController = () => {
     }
   }
 
+  const info = async(req, res, next) => {
+    const user = await db.User.findOne({ where: { id: req.user.id } })
+
+    const token = helpers.issueToken(req.user.id, req.user.email, req.user.orgName, req.app.get('secret'))
+
+    const result = {
+      user: user,
+      token: token
+    }
+
+    return helpers.successResponse(req, res, result, 200)
+  }
+
   return {
-    login: login
+    login: login,
+    info: info 
   }
 }
 
