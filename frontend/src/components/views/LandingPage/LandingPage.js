@@ -3,8 +3,11 @@ import axios from 'axios'
 
 function LandingPage() {
   useEffect(() => {
-    axios.post('http://localhost:3000/sessions')
-    .then(response => console.log(response.data))
+    axios.post('/api/sessions', {
+      email: "minkyujeon1@gmail.com",
+      password: "passw0rd!"
+    })
+      .then(response => console.log(response.data))
   }, [])
 
   return (
