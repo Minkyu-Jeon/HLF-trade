@@ -23,7 +23,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const skipAuthPaths = ['/users', '/sessions']
+const skipAuthPaths = ['/api/users', '/api/sessions']
 // set secret constiable
 app.set('secret', process.env.EXPRESS_SECRET_KEY_BASE)
 // app.use(expressJWT({
@@ -37,7 +37,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(async (req, res, next) => {
-  if ( skipAuthPaths.includes(req.originalUrl) ) {
+  if ( skipAuthPaths.includes(`${req.originalUrl}`) ) {
     return next()
   }
   const token = req.token
@@ -67,9 +67,9 @@ app.use(async (req, res, next) => {
 })
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/sessions', sessionsRouter);
-app.use('/used_things', usedThingsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/sessions', sessionsRouter);
+app.use('/api/used_things', usedThingsRouter);
 app.use(errorHandler)
 
 module.exports = app;

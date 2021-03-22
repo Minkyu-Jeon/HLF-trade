@@ -6,7 +6,7 @@ const SessionController = () => {
   const login = async (req, res, next) => {
     try {
       const loginParams = { email: req.body.email, password: req.body.password }
-
+      
       const result = await new Login(loginParams, req.app.get('secret')).login()
 
       return helpers.successResponse(req, res, result, 200)
