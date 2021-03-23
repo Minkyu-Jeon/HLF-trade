@@ -3,8 +3,6 @@ import { withRouter } from 'react-router-dom'
 import Container from '../Container/Container'
 
 function LandingPage(props) {
-
-
   return (
     <Container>
       <div style={{

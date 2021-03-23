@@ -3,7 +3,8 @@ import {
   LOGIN_USER,
   REGISTER_USER,
   AUTH_USER,
-  LOGOUT_USER
+  LOGOUT_USER,
+  ENROLL_USER
 } from './types'
 
 export function loginUser(dataToSubmit) {
@@ -43,8 +44,21 @@ export function logout() {
     .then(response => response.data)
     .catch(error => error.response.data)
   
-    return {
-      type: LOGOUT_USER,
-      payload: request
-    }
+  return {
+    type: LOGOUT_USER,
+    payload: request
+  }
+}
+
+export function enrollNetwork(orgName) {
+  const request = axios.post('/api/users/enroll', {
+    orgName: orgName
+  })
+    .then(response => response.data)
+    .catch(error => error.response.data)
+  
+  return {
+    type: ENROLL_USER,
+    payload: request
+  }
 }

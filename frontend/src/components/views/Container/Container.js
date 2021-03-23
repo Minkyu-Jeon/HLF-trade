@@ -1,19 +1,43 @@
-import { Layout, Menu } from 'antd'
-import React from 'react'
-import { useSelector } from 'react-redux'
+import { Layout, Menu, Modal, Button } from 'antd'
+import React, { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import { logout } from '../../../_actions/user_action'
-import { useDispatch } from 'react-redux'
+import { logout, enrollNetwork } from '../../../_actions/user_action'
 
 function Container(props) {
   const { Header, Footer, Content } = Layout
-
-  const currentUser = useSelector((state) => state.user)
-
+  const { SubMenu } = Menu 
   const dispatch = useDispatch()
+
+  const { currentUser: currentUser } = useSelector((state) => state.user)
+  const [isModalVisible, setIsModalVisible] = useState(false)
+
+  const showModal = () => {
+    setIsModalVisible(true)
+  }
+
+  const handleOk = () => {
+    setIsModalVisible(false)
+  }
+  const handleCancel = () => {
+    setIsModalVisible(false)
+  }
+  const handleClickButton = (event) => {
+    event.preventDefault()
+    dispatch(enrollNetwork('Org1')).then(response => {
+      if ( response.payload.code == 200 ) {
+        alert('You are successfully enrolled')
+        setIsModalVisible(false)
+      } else {
+        alert('an error occured')
+      }
+    })
+  } 
+
 
   const handleClick = (event) => {
     const link = event.item.props.link
+    const key = event.key
 
     if ( link === 'logout' ) {
       dispatch(logout()).then(response => {
@@ -24,6 +48,8 @@ function Container(props) {
           alert('로그아웃 실패')
         }
       })
+    } else if ( key === 'myinfo:show' ) {
+      showModal()
     } else {
       props.history.push(link)
     }
@@ -40,15 +66,18 @@ function Container(props) {
         >
           <Menu.Item key='home' link='/'>Home</Menu.Item>
           {
-            currentUser && currentUser.code === 200 &&
+            currentUser && currentUser.code == 200 &&
             (
-            <Menu.Item key='logout' link='logout'>Logout</Menu.Item>
+            <SubMenu key='myinfo' title={ currentUser.data.user.nickname }>
+              <Menu.Item key='myinfo:logout' link='logout'>Logout</Menu.Item>
+              <Menu.Item key='myinfo:show'>MyInfo</Menu.Item>
+            </SubMenu>
             )
           }
           {
             currentUser && currentUser.code === 200 &&
             (
-            <Menu.Item key='mypage' link='mypage'>My Page</Menu.Item>
+            <Menu.Item key='products' link='products'>Products</Menu.Item>
             )
           }
           {
@@ -72,11 +101,26 @@ function Container(props) {
         </Menu>
       </Header>
       <Layout>
-        <Content>
-          {props.children}
+        <Content style={{ padding: '0 50px' }}>
+          <div className="site-layout-content">
+            {props.children}
+          </div>
         </Content>
       </Layout>
-      <Footer>footer</Footer>
+      <Footer></Footer>
+      {
+        currentUser && currentUser.code == 200 && (
+          <Modal title="My Information" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+            <p>Nickname: { currentUser.data.user.nickname }</p>
+            <p>Email: { currentUser.data.user.email }</p>
+            <p>Phone: { currentUser.data.user.phone }</p>
+            <p>Address: { currentUser.data.user.address }</p>
+            <p>Org: { currentUser.data.org || (
+              <Button type="primary" onClick={handleClickButton}>Enroll Org</Button>
+            ) }</p>
+          </Modal>
+        )
+      }
     </Layout>
   )
 }

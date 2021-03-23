@@ -1,5 +1,6 @@
 import {
   AUTH_USER,
+  ENROLL_USER,
   LOGIN_USER,
   LOGOUT_USER,
   REGISTER_USER
@@ -15,6 +16,8 @@ export default function(state={}, action) {
       return {...state, currentUser: action.payload}
     case LOGOUT_USER:
       return {...state, logoutSuccess: action.payload}
+    case ENROLL_USER:
+      return {...state, enrollSuccess: action.payload}
     default:
       return state
   }
