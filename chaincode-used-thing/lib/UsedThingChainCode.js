@@ -31,7 +31,8 @@ class UsedThingChainCode extends Contract {
   }
 
   async Get(ctx, id) {
-    const assetJSON = await ctx.stub.getState(id); 
+    const key = ctx.stub.createCompositeKey(UsedThing.getClass(), [id])
+    const assetJSON = await ctx.stub.getState(key); 
     if (!assetJSON || assetJSON.length === 0) {
       throw new Error(`The asset ${id} does not exist`);
     }
@@ -40,8 +41,8 @@ class UsedThingChainCode extends Contract {
   }
 
   async Show(ctx, id) {
-    const asset = this.Get(ctx, id)
-    return asset.toBuffer();
+    const asset = await this.Get(ctx, id)
+    return asset;
   }
 
   async assetExists(ctx, id) {
@@ -50,8 +51,7 @@ class UsedThingChainCode extends Contract {
   }
 
   async BuyRequestAsset(ctx, id, buyer) {
-    const key = ctx.stub.createCompositeKey(UsedThing.getClass(), [id])
-    const asset = await this.Get(ctx, key)
+    const asset = await this.Get(ctx, id)
     
     if ( !asset.isRegistered() ) {
       throw new Error(`currentState must be registered`)
@@ -69,8 +69,7 @@ class UsedThingChainCode extends Contract {
   }
 
   async SendAsset(ctx, id) {
-    const key = ctx.stub.createCompositeKey(UsedThing.getClass(), [id])
-    const asset = await this.Get(ctx, key)
+    const asset = await this.Get(ctx, id)
     const currentUser = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
 
     console.log(`currentUser: ${currentUser}`)
@@ -89,8 +88,7 @@ class UsedThingChainCode extends Contract {
   }
   
   async ReceiveAsset(ctx, id) {
-    const key = ctx.stub.createCompositeKey(UsedThing.getClass(), [id])
-    const asset = await this.Get(ctx, key)
+    const asset = await this.Get(ctx, id)
     const currentUser = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
 
     if ( !asset.isSent() ) {
@@ -107,8 +105,7 @@ class UsedThingChainCode extends Contract {
   }
 
   async ConfirmAsset(ctx, id) {
-    const key = ctx.stub.createCompositeKey(UsedThing.getClass(), [id])
-    const asset = await this.Get(ctx, key)
+    const asset = await this.Get(ctx, id)
     const currentUser = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
 
     if ( !asset.isReceived() ) {
