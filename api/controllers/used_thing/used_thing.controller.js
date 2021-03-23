@@ -33,10 +33,10 @@ const UsedThingController = () => {
         const contract = network.getContract(chainCodeName)
 
         result = await contract.evaluateTransaction('Show', req.params.id)
-        console.log('*** Result: committed')
         if ( `${result}` !== '' ) {
           console.log(`*** Result: ${result.toString()}`)
         }
+        
         result = JSON.parse(result.toString())
       } catch (err) {
         throw new Error(err.message)
@@ -47,7 +47,7 @@ const UsedThingController = () => {
     } catch (err) {
       return helper.errorResponse(req, res, [err.message], 400, err)
     }
-    return helper.successResponse(req, res, result, 0)
+    return helper.successResponse(req, res, result, 200)
   }
 
   const index = async (req, res, next) => {
