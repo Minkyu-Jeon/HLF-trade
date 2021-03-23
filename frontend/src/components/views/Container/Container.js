@@ -38,16 +38,29 @@ function Container(props) {
           mode='horizontal'
           onClick={handleClick}
         >
+          <Menu.Item key='home' link='/'>Home</Menu.Item>
           {
             currentUser && currentUser.code == 200 &&
             (
-            <Menu.Item key='login' link='logout'>Logout</Menu.Item>
+            <Menu.Item key='logout' link='logout'>Logout</Menu.Item>
+            )
+          }
+          {
+            currentUser && currentUser.code == 200 &&
+            (
+            <Menu.Item key='upload' link='upload'>Upload</Menu.Item>
             )
           }
           {
             currentUser && currentUser.code != 200 &&
             (
             <Menu.Item key='login' link='login'>Login</Menu.Item>
+            )
+          }
+          {
+            currentUser && currentUser.code != 200 &&
+            (
+            <Menu.Item key='signup' link='register'>Signup</Menu.Item>
             )
           }
         </Menu>
