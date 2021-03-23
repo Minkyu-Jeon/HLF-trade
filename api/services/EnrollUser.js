@@ -28,7 +28,9 @@ class EnrollUser {
 
     await CAUtil.registerAndEnrollUser(caClient, wallet, `${this.orgName}MSP`, this.userParams.email, this.getAffiliation())
 
-    return this.userParams
+    const mspId = await wallet.get(this.userParams.email).mspId
+
+    return mspId
   }
 
   lowerCaseOrgName() {

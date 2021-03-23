@@ -34,7 +34,8 @@ const SessionController = () => {
 
     const result = {
       user: user,
-      token: token
+      token: token,
+      org: req.user.orgName
     }
 
     return helpers.successResponse(req, res, result, 200)

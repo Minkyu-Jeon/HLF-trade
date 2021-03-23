@@ -25,9 +25,19 @@ const UserController = () => {
 
   const enroll = async (req, res, next) => {
     try {
-      const result = await new EnrollUser(req.user, req.body.orgName).enroll()
+      const mspId = await new EnrollUser(req.user, req.body.orgName).enroll()
 
-      return helper.successResponse(req, res, result)
+      const token = helper.issueToken(
+        req.user.id, 
+        req.user.email, 
+        req.user.userTokenString, 
+        mspId, 
+        req.app.get('secret')
+      )
+
+      res.cookie('x_auth', token)
+
+      return helper.successResponse(req, res, { orgName: mspId })
     } catch ( err ) {
       return helper.errorResponse(req, res, [err.message], 400, err)
     }
