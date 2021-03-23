@@ -12,9 +12,9 @@ export default function(state={}, action) {
     case REGISTER_USER:
       return {...state, registerSuccess: action.payload}
     case AUTH_USER:
-      return {...state, data: action.payload}
+      return {...state, currentUser: action.payload}
     case LOGOUT_USER:
-      return {...state, data: action.payload}
+      return {...state, logoutSuccess: action.payload}
     default:
       return state
   }
