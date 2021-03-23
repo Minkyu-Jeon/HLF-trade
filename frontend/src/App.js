@@ -8,6 +8,7 @@ import {
 import LandingPage from './components/views/LandingPage/LandingPage'
 import LoginPage from './components/views/LoginPage/LoginPage'
 import RegisterPage from './components/views/RegisterPage/RegisterPage'
+import ProductPage from './components/views/ProductPage/ProductPage'
 import Auth from './hoc/auth'
 
 function App() {
@@ -18,7 +19,7 @@ function App() {
       <Switch>
         <Route exact path="/" component={Auth(LandingPage, null)} />
         <Route exact path="/upload" component={Auth(LoginPage, true)} />
-        <Route exact path="/products" component={Auth(LoginPage, true)} />
+        <Route exact path="/products" component={Auth(ProductPage, true)} />
         <Route exact path="/login" component={Auth(LoginPage, false)} />
         <Route exact path="/register" component={Auth(RegisterPage, false)} />
       </Switch>
