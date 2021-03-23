@@ -87,7 +87,7 @@ const UsedThingController = () => {
     } catch (err) {
       return helper.errorResponse(req, res, [err.message], 400, err)
     }
-    return helper.successResponse(req, res, result, 0)
+    return helper.successResponse(req, res, result, 200)
   }
 
   const selling = async (req, res, next) => {
@@ -127,7 +127,7 @@ const UsedThingController = () => {
     } catch (err) {
       return helper.errorResponse(req, res, [err.message], 400, err)
     }
-    return helper.successResponse(req, res, result, 0)
+    return helper.successResponse(req, res, result, 200)
   }
 
   const buying = async (req, res, next) => {
@@ -167,7 +167,7 @@ const UsedThingController = () => {
     } catch (err) {
       return helper.errorResponse(req, res, [err.message], 400, err)
     }
-    return helper.successResponse(req, res, result, 0)
+    return helper.successResponse(req, res, result, 200)
   }
 
   const register = async (req, res, next) => {
@@ -219,7 +219,7 @@ const UsedThingController = () => {
       return helper.errorResponse(req, res, [err.message], 400, err)
     }
 
-    return helper.successResponse(req, res, result, 0)
+    return helper.successResponse(req, res, result, 200)
   }
   
   const buyRequest = async (req, res, next) => {
@@ -267,7 +267,7 @@ const UsedThingController = () => {
       return helper.errorResponse(req, res, [err.message], 400, err)
     }
 
-    return helper.successResponse(req, res, result, 0)
+    return helper.successResponse(req, res, result, 200)
   }
 
   const sendThing = async (req, res, next) => {
@@ -314,7 +314,7 @@ const UsedThingController = () => {
       return helper.errorResponse(req, res, [err.message], 400, err)
     }
 
-    return helper.successResponse(req, res, result, 0)
+    return helper.successResponse(req, res, result, 200)
   }
 
   const receiveThing = async (req, res, next) => {
@@ -361,7 +361,7 @@ const UsedThingController = () => {
       return helper.errorResponse(req, res, [err.message], 400, err)
     }
 
-    return helper.successResponse(req, res, result, 0)
+    return helper.successResponse(req, res, result, 200)
   }
 
   const confirmThing = async (req, res, next) => {
@@ -408,7 +408,7 @@ const UsedThingController = () => {
       return helper.errorResponse(req, res, [err.message], 400, err)
     }
 
-    return helper.successResponse(req, res, result, 0)
+    return helper.successResponse(req, res, result, 200)
   }
 
   return {
