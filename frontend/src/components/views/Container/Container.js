@@ -69,7 +69,7 @@ function Container(props) {
             currentUser && currentUser.code == 200 &&
             (
             <SubMenu key='myinfo' title={ currentUser.data.user.nickname }>
-              <Menu.Item key='myinfo:logout' link='logout'>Logout</Menu.Item>
+              <Menu.Item key='myinfo:logout' link='/logout'>Logout</Menu.Item>
               <Menu.Item key='myinfo:show'>MyInfo</Menu.Item>
             </SubMenu>
             )
@@ -77,25 +77,25 @@ function Container(props) {
           {
             currentUser && currentUser.code === 200 &&
             (
-            <Menu.Item key='products' link='products'>Products</Menu.Item>
+            <Menu.Item key='products' link='/products'>Products</Menu.Item>
             )
           }
           {
             currentUser && currentUser.code === 200 &&
             (
-            <Menu.Item key='upload' link='upload'>Upload</Menu.Item>
+            <Menu.Item key='upload' link='/upload'>Upload</Menu.Item>
             )
           }
           {
             currentUser && currentUser.code !== 200 &&
             (
-            <Menu.Item key='login' link='login'>Login</Menu.Item>
+            <Menu.Item key='login' link='/login'>Login</Menu.Item>
             )
           }
           {
             currentUser && currentUser.code !== 200 &&
             (
-            <Menu.Item key='signup' link='register'>Signup</Menu.Item>
+            <Menu.Item key='signup' link='/register'>Signup</Menu.Item>
             )
           }
         </Menu>

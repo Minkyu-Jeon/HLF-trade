@@ -1,6 +1,7 @@
 import {
   GET_USED_THING_LIST,
-  GET_USED_THING
+  GET_USED_THING,
+  SUBMIT_USED_THING_FORM
 } from '../_actions/types'
 
 export default function(state={}, action) {
@@ -9,6 +10,8 @@ export default function(state={}, action) {
       return {...state, getUsedThingsSuccess: action.payload}
     case GET_USED_THING:
       return {...state, getUsedThingSuccess: action.payload}
+    case SUBMIT_USED_THING_FORM:
+      return {...state, submitUsedThingFormSuccess: action.payload}
     default:
       return state
   }

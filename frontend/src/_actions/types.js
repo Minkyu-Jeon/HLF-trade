@@ -8,3 +8,4 @@ export const ENROLL_USER = 'enroll_user'
 // Used Things
 export const GET_USED_THING_LIST = 'get_used_thing_list'
 export const GET_USED_THING = 'get_used_thing'
+export const SUBMIT_USED_THING_FORM = 'submit_used_thing_form'

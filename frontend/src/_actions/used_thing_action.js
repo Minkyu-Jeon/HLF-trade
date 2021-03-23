@@ -2,6 +2,7 @@ import axios from 'axios'
 import {
   GET_USED_THING_LIST,
   GET_USED_THING,
+  SUBMIT_USED_THING_FORM
 } from './types'
 
 export function getUsedThingList() {
@@ -22,6 +23,17 @@ export function getUsedThing(key) {
 
   return {
     type: GET_USED_THING,
+    payload: request
+  }
+}
+
+export function registerUsedThing(body) {
+  const request = axios.post(`/api/used_things`, body)
+    .then(response => response.data)
+    .catch(error => error.response.data)
+
+  return {
+    type: SUBMIT_USED_THING_FORM,
     payload: request
   }
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Container from '../Container/Container'
 import { useDispatch } from 'react-redux'
 import { getUsedThingList } from '../../../_actions/used_thing_action'
-import { Table } from 'antd'
+import { Button, Table } from 'antd'
 import { Link, withRouter } from 'react-router-dom'
 
 
@@ -61,6 +61,9 @@ function ProductPage() {
   return (
     <Container>
       <h1>Product List</h1>
+      <div style={{ textAlign: 'right', marginBottom: '20px' }}>
+        <Button type='primary' href='/products/new'>Register New Product</Button>
+      </div>
       <Table dataSource={products} columns={columns} />
     </Container>
   )
