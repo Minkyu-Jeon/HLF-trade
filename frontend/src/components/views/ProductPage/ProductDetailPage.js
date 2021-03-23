@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Descriptions } from 'antd'
 import Container from '../Container/Container'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { getUsedThing } from '../../../_actions/used_thing_action'
 import { withRouter } from 'react-router-dom'
 
 function ProductDetailPage(props) {
   const [product, setProduct] = useState({})
+  const { currentUser: currentUser } = useSelector((state) => state.user)
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -36,6 +37,14 @@ function ProductDetailPage(props) {
         <Descriptions.Item label="Seller">
           {product.Seller}
         </Descriptions.Item>
+        {
+          currentUser.data.user.email != product.Seller &&
+          (
+            <Descriptions.Item label="Buy Request" span={2}>
+              <Button type='primary'>Buy Request</Button>
+            </Descriptions.Item>
+          )
+        }
       </Descriptions>
       <div style={{ textAlign: 'center', padding: '20px' }}>
         <img src={product.ImageUrl} />

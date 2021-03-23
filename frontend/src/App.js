@@ -20,7 +20,6 @@ function App() {
           renders the first one that matches the current URL. */}
       <Switch>
         <Route exact path="/" component={Auth(LandingPage, null)} />
-        <Route exact path="/upload" component={Auth(LoginPage, true)} />
         <Route exact path="/products" component={Auth(ProductPage, true)} />
         <Route exact path="/products/new" component={Auth(ProductRegisterPage, true)} />
         <Route exact path="/products/:id" component={Auth(ProductDetailPage, true)} />

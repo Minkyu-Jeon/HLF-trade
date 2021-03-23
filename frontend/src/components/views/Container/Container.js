@@ -1,5 +1,5 @@
 import { Layout, Menu, Modal, Button } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { logout, enrollNetwork } from '../../../_actions/user_action'
@@ -39,7 +39,7 @@ function Container(props) {
     const link = event.item.props.link
     const key = event.key
 
-    if ( link === 'logout' ) {
+    if ( link === '/logout' ) {
       dispatch(logout()).then(response => {
         if ( response.payload.success ) {
           props.history.push('/')
@@ -55,6 +55,10 @@ function Container(props) {
     }
   }
 
+  const reducePathName = (pathname) => {
+    return `/${pathname.split('/')[1]}`
+  }
+
   return (
     <Layout className='layout'>
       <Header>
@@ -63,8 +67,9 @@ function Container(props) {
           theme='dark' 
           mode='horizontal'
           onClick={handleClick}
+          selectedKeys={[reducePathName(props.history.location.pathname)]}
         >
-          <Menu.Item key='home' link='/'>Home</Menu.Item>
+          <Menu.Item key='/' link='/'>Home</Menu.Item>
           {
             currentUser && currentUser.code == 200 &&
             (
@@ -77,25 +82,19 @@ function Container(props) {
           {
             currentUser && currentUser.code === 200 &&
             (
-            <Menu.Item key='products' link='/products'>Products</Menu.Item>
-            )
-          }
-          {
-            currentUser && currentUser.code === 200 &&
-            (
-            <Menu.Item key='upload' link='/upload'>Upload</Menu.Item>
+            <Menu.Item key='/products' link='/products'>Products</Menu.Item>
             )
           }
           {
             currentUser && currentUser.code !== 200 &&
             (
-            <Menu.Item key='login' link='/login'>Login</Menu.Item>
+            <Menu.Item key='/login' link='/login'>Login</Menu.Item>
             )
           }
           {
             currentUser && currentUser.code !== 200 &&
             (
-            <Menu.Item key='signup' link='/register'>Signup</Menu.Item>
+            <Menu.Item key='/signup' link='/register'>Signup</Menu.Item>
             )
           }
         </Menu>
