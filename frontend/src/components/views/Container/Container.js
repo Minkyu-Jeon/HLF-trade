@@ -8,14 +8,14 @@ import { useDispatch } from 'react-redux'
 function Container(props) {
   const { Header, Footer, Content } = Layout
 
-  const { currentUser: currentUser } = useSelector((state) => state.user)
+  const currentUser = useSelector((state) => state.user)
 
   const dispatch = useDispatch()
 
   const handleClick = (event) => {
     const link = event.item.props.link
 
-    if ( link == 'logout' ) {
+    if ( link === 'logout' ) {
       dispatch(logout()).then(response => {
         if ( response.payload.success ) {
           props.history.push('/')
@@ -40,25 +40,31 @@ function Container(props) {
         >
           <Menu.Item key='home' link='/'>Home</Menu.Item>
           {
-            currentUser && currentUser.code == 200 &&
+            currentUser && currentUser.code === 200 &&
             (
             <Menu.Item key='logout' link='logout'>Logout</Menu.Item>
             )
           }
           {
-            currentUser && currentUser.code == 200 &&
+            currentUser && currentUser.code === 200 &&
+            (
+            <Menu.Item key='mypage' link='mypage'>My Page</Menu.Item>
+            )
+          }
+          {
+            currentUser && currentUser.code === 200 &&
             (
             <Menu.Item key='upload' link='upload'>Upload</Menu.Item>
             )
           }
           {
-            currentUser && currentUser.code != 200 &&
+            currentUser && currentUser.code !== 200 &&
             (
             <Menu.Item key='login' link='login'>Login</Menu.Item>
             )
           }
           {
-            currentUser && currentUser.code != 200 &&
+            currentUser && currentUser.code !== 200 &&
             (
             <Menu.Item key='signup' link='register'>Signup</Menu.Item>
             )
