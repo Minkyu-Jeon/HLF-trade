@@ -3,6 +3,8 @@ import Container from '../Container/Container'
 import { useDispatch } from 'react-redux'
 import { getUsedThingList } from '../../../_actions/used_thing_action'
 import { Table } from 'antd'
+import { Link, withRouter } from 'react-router-dom'
+
 
 function ProductPage() {
   const dispatch = useDispatch()
@@ -16,7 +18,10 @@ function ProductPage() {
     {
       title: 'Title',
       key: 'Title',
-      dataIndex: 'Title'
+      dataIndex: 'Title',
+      render: (text, record) => {
+        return <Link to={`/products/${record.key}`}>{text}</Link>
+      }
     },
     {
       title: 'Price',
@@ -36,8 +41,10 @@ function ProductPage() {
   ]
 
   const transformArray = (originAry) => {
-    return originAry.map((item, index) => {
-      return {key: index, ...item.Record}
+    return originAry.map((item) => {
+      let char = item.Key.charAt(0)
+      let key = item.Key.split(char)[2]
+      return {key: key, ...item.Record}
     })
   }
 
@@ -59,4 +66,4 @@ function ProductPage() {
   )
 }
 
-export default ProductPage
+export default withRouter(ProductPage)
