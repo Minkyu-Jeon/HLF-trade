@@ -20,7 +20,6 @@ class UsedThing extends State {
 
   constructor(obj) {
     super(UsedThing.getClass(), [obj.Seller, obj.ProductName]);
-    this.currentState = this.currentState || utState.REGISTERED
     Object.assign(this, obj);
   }
 
@@ -36,12 +35,28 @@ class UsedThing extends State {
     this.Seller = seller
   }
 
+  getSellerMSPID() {
+    return this.SellerMSPID
+  }
+
+  setSellerMSPID(mspID) {
+    this.SellerMSPID = mspID 
+  }
+
   getBuyer() {
     return this.Buyer
   }
 
   setBuyer(buyer) {
     this.Buyer = buyer
+  }
+
+  getBuyerSPID() {
+    return this.BuyerMSPID
+  }
+
+  setBuyerMSPID(mspID) {
+    this.BuyerMSPID = mspID 
   }
 
   setAddress(encryptedAddress) {
@@ -111,8 +126,8 @@ class UsedThing extends State {
   /**
    * Factory method to create a used thing object
    */
-  static createInstance(Seller, Title, ProductName, Category, ImageUrl, Description, Price) {
-    return new UsedThing({ Seller, Title, ProductName, Category, ImageUrl, Description, Price });
+  static createInstance(Title, ProductName, Category, ImageUrl, Description, Price) {
+    return new UsedThing({ Title, ProductName, Category, ImageUrl, Description, Price });
   }
 
   static getClass() {

@@ -1,57 +1,60 @@
 'use strict';
 
-const { Contract } = require('fabric-contract-api');
+const { Contract, Context } = require('fabric-contract-api');
+
 const UsedThing = require('./UsedThing')
-const State = require('../ledger-api/state')
+const ThingList = require('./UsedThingList')
+const QueryUtils = require('./queries')
+
+class UsedThingContext extends Context {
+  constructor() {
+    super()
+    this.thingList = new ThingList(this)
+  }
+}
 
 class UsedThingChainCode extends Contract {
+
+  constructor() {
+    super('org.example.used_thing')
+  }
 
   async InitLedger(ctx) {
     // empty
   }
 
+  createContext() {
+    return new UsedThingContext()
+  }
+
   async CreateAsset(ctx, category, title, product_name, image_url, description, price, seller) {
-    const asset = UsedThing.createInstance(
-      seller,
-      title,
-      product_name,
-      category,
-      image_url,
-      description,
-      price,
-    );
+    const asset = UsedThing.createInstance(title, product_name, category, image_url, description, price);
 
-    const txID = ctx.stub.getTxID()
+    asset.setRegistered()
+    
+    let mspid = ctx.clientIdentity.getMSPID()
 
-    const key = ctx.stub.createCompositeKey(UsedThing.getClass(), [txID])
+    console.log(`mspid: ${mspid} =================================`)
+    console.log(`seller: ${seller} =================================`)
 
-    await ctx.stub.putState(key, State.serialize(asset));
+    asset.setSellerMSPID(mspid)
+
+    asset.setSeller(seller)
+
+    await ctx.thingList.addThing(asset)
 
     return asset;
   }
 
-  async Get(ctx, id) {
-    const key = ctx.stub.createCompositeKey(UsedThing.getClass(), [id])
-    const assetJSON = await ctx.stub.getState(key); 
-    if (!assetJSON || assetJSON.length === 0) {
-      throw new Error(`The asset ${id} does not exist`);
-    }
-    const asset = UsedThing.fromBuffer(assetJSON)
-    return asset;
+  async Show(ctx, key) {
+    const asset = await ctx.thingList.getThing(key)
+    return asset
   }
 
-  async Show(ctx, id) {
-    const asset = await this.Get(ctx, id)
-    return asset;
-  }
+  async BuyRequestAsset(ctx, key) {
+    const asset = await ctx.thingList.getThing(key)
 
-  async assetExists(ctx, id) {
-    const assetJSON = await ctx.stub.getState(id);
-    return assetJSON && assetJSON.length > 0;
-  }
-
-  async BuyRequestAsset(ctx, id, buyer) {
-    const asset = await this.Get(ctx, id)
+    const buyer = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
     
     if ( !asset.isRegistered() ) {
       throw new Error(`currentState must be registered`)
@@ -64,155 +67,100 @@ class UsedThingChainCode extends Contract {
     asset.setBuyRequested();
     
     asset.setBuyer(buyer)
-    
-    return await ctx.stub.putState(key, State.serialize(asset));
+
+    let mspid = ctx.clientIdentity.getMSPID()
+
+    asset.setBuyerMSPID(mspid)
+
+    await ctx.thingList.updateThing(asset)
+
+    return asset
   }
 
-  async SendAsset(ctx, id) {
-    const asset = await this.Get(ctx, id)
-    const currentUser = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
+  async SendAsset(ctx, key) {
+    const asset = await ctx.thingList.getThing(key)
 
-    console.log(`currentUser: ${currentUser}`)
+    const buyer = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
 
     if ( !asset.isBuyRequested() ) {
       throw new Error(`currentState must be buy_requested`)
     }
 
-    if ( asset.getSeller() != currentUser ) {
+    if ( asset.getSeller() != buyer ) {
       throw new Error(`only seller invoke this contract`)
     }
 
     asset.setSent();
-    
-    return await ctx.stub.putState(key, State.serialize(asset));
+
+    await ctx.thingList.updateThing(asset)
+
+    return asset
   }
   
-  async ReceiveAsset(ctx, id) {
-    const asset = await this.Get(ctx, id)
-    const currentUser = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
+  async ReceiveAsset(ctx, key) {
+    const asset = await ctx.thingList.getThing(key)
+
+    const buyer = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
 
     if ( !asset.isSent() ) {
       throw new Error(`currentState must be sent`)
     }
 
-    if ( asset.getBuyer() != currentUser ) {
+    if ( asset.getBuyer() != buyer ) {
       throw new Error(`only buyer invoke this contract`)
     }
 
     asset.setReceived()
+
+    await ctx.thingList.updateThing(asset)
     
-    return await ctx.stub.putState(key, State.serialize(asset));
+    return asset
   }
 
-  async ConfirmAsset(ctx, id) {
-    const asset = await this.Get(ctx, id)
-    const currentUser = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
+  async ConfirmAsset(ctx, key) {
+    const asset = await ctx.thingList.getThing(key)
+
+    const buyer = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
 
     if ( !asset.isReceived() ) {
       throw new Error(`currentState must be received`)
     }
 
-    if ( asset.getBuyer() != currentUser ) {
+    if ( asset.getBuyer() != buyer ) {
       throw new Error(`only buyer invoke this contract`)
     }
 
-    asset.setConfirmed()
+    await ctx.thingList.updateThing(asset)
     
-    return await ctx.stub.putState(key, State.serialize(asset));
+    return asset
+  }
+
+  async queryHistory(ctx, key) {
+    let query = this.getQueryUtils(ctx)
+    let result = await query.getAssetHistory(key)
+    return result
   }
 
   async GetAllAssetsByState(ctx, state) {
-    let queryString = {}
-    queryString.selector = {}
-    queryString.selector.currentState = parseInt(state)
-    const resultsItorator = await ctx.stub.getQueryResult(JSON.stringify(queryString))
-    let queryResult = await this.getAllResults(resultsItorator, false)
+    let query = this.getQueryUtils(ctx)
+    let queryResult = await query.queryByAdhoc({selector: { currentState: parseInt(state) }})
     return queryResult
   }
 
   async GetAllSellingAssets(ctx, seller) {
-    let queryString = {}
-    queryString.selector = {}
-    queryString.selector.Seller = seller
-    const resultsItorator = await ctx.stub.getQueryResult(JSON.stringify(queryString))
-    let queryResult = await this.getAllResults(resultsItorator, false)
+    let query = this.getQueryUtils(ctx)
+    let queryResult = await query.queryKeyBySeller(seller)
     return queryResult
   }
 
   async GetAllBuyingAssets(ctx, buyer) {
-    let queryString = {}
-    queryString.selector = {}
-    queryString.selector.Buyer = buyer
-    const resultsItorator = await ctx.stub.getQueryResult(JSON.stringify(queryString))
-    let queryResult = await this.getAllResults(resultsItorator, false)
+    let query = this.getQueryUtils(ctx)
+    let queryResult = await query.queryKeyByBuyer(buyer)
     return queryResult
   }
 
-  async getAllResults(iterator, isHistory) {
-    let allResults = [];
-    let res = { done: false, value: null };
-
-    while (true) {
-      res = await iterator.next();
-      let jsonRes = {};
-      if (res.value && res.value.value.toString()) {
-        if (isHistory && isHistory === true) {
-          jsonRes.TxId = res.value.txId;
-          jsonRes.Timestamp = res.value.timestamp;
-          jsonRes.Timestamp = new Date((res.value.timestamp.seconds.low * 1000));
-          let ms = res.value.timestamp.nanos / 1000000;
-          jsonRes.Timestamp.setMilliseconds(ms);
-          if (res.value.is_delete) {
-            jsonRes.IsDelete = res.value.is_delete.toString();
-          } else {
-            try {
-              jsonRes.Value = JSON.parse(res.value.value.toString('utf8'));
-              // report the commercial paper states during the asset lifecycle, just for asset history reporting
-              switch (jsonRes.Value.currentState) {
-                case 1:
-                  jsonRes.Value.currentState = 'REGISTERED';
-                  break;
-                case 2:
-                  jsonRes.Value.currentState = 'BUY_REQUESTED';
-                  break;
-                case 3:
-                  jsonRes.Value.currentState = 'SENT';
-                  break;
-                case 4:
-                  jsonRes.Value.currentState = 'RECEIVED';
-                  break;
-                case 5:
-                  jsonRes.Value.currentState = 'CONFIRMED';
-                  break;
-                default: // else, unknown named query
-                  jsonRes.Value.currentState = 'UNKNOWN';
-              }
-
-            } catch (err) {
-              console.log(err);
-              jsonRes.Value = res.value.value.toString('utf8');
-            }
-          }
-        } else { // non history query ..
-          jsonRes.Key = res.value.key;
-          try {
-            jsonRes.Record = JSON.parse(res.value.value.toString('utf8'));
-          } catch (err) {
-            console.log(err);
-            jsonRes.Record = res.value.value.toString('utf8');
-          }
-        }
-        allResults.push(jsonRes);
-      }
-      // check to see if we have reached the end
-      if (res.done) {
-        // explicitly close the iterator 
-        console.log('iterator is done');
-        await iterator.close();
-        return allResults;
-      }
-
-    }  // while true
+  getQueryUtils(ctx) {
+    return new QueryUtils(ctx, 'org.example.thing')
   }
 }
 

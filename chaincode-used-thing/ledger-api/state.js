@@ -1,7 +1,7 @@
 /*
-* Copyright IBM Corp. All Rights Reserved.
-*
-* SPDX-License-Identifier: Apache-2.0
+ * Copyright IBM Corp. All Rights Reserved.
+ *
+ * SPDX-License-Identifier: Apache-2.0
 */
 
 'use strict';
@@ -30,11 +30,11 @@ class State {
     return this.key;
   }
 
-  getSplitKey(){
+  getSplitKey() {
     return State.splitKey(this.key);
   }
 
-  getCurrentState(){
+  getCurrentState() {
     return this.currentState;
   }
 
@@ -90,7 +90,7 @@ class State {
     return keyParts.map(part => part).join(':');
   }
 
-  static splitKey(key){
+  static splitKey(key) {
     return key.split(':');
   }
 
