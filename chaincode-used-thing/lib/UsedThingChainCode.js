@@ -137,6 +137,8 @@ class UsedThingChainCode extends Contract {
     if ( asset.getBuyer() != buyer ) {
       throw new Error(`only buyer invoke this contract`)
     }
+    
+    asset.setConfirmed()
 
     await ctx.thingList.updateThing(asset)
     
