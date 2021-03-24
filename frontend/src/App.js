@@ -12,6 +12,7 @@ import ProductPage from './components/views/ProductPage/ProductPage'
 import ProductDetailPage from './components/views/ProductPage/ProductDetailPage'
 import ProductRegisterPage from './components/views/ProductPage/ProductRegisterPage'
 import Auth from './hoc/auth'
+import TransactionPage from './components/views/TransactionPage/TransactionPage';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route exact path="/products" component={Auth(ProductPage, true)} />
         <Route exact path="/products/new" component={Auth(ProductRegisterPage, true)} />
         <Route exact path="/products/:serial_number/:product_name" component={Auth(ProductDetailPage, true)} />
+        <Route exact path="/users/transactions" component={Auth(TransactionPage, true)} />
         <Route exact path="/login" component={Auth(LoginPage, false)} />
         <Route exact path="/register" component={Auth(RegisterPage, false)} />
       </Switch>

@@ -86,6 +86,12 @@ function Container(props) {
             )
           }
           {
+            currentUser && currentUser.code === 200 &&
+            (
+            <Menu.Item key='/users/transactions' link='/users/transactions'>Transactions</Menu.Item>
+            )
+          }
+          {
             currentUser && currentUser.code !== 200 &&
             (
             <Menu.Item key='/login' link='/login'>Login</Menu.Item>

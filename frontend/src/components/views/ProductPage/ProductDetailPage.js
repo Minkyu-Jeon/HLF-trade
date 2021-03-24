@@ -54,7 +54,7 @@ function ProductDetailPage(props) {
           {product.Seller}
         </Descriptions.Item>
         {
-          currentUser.data.user.email != product.Seller &&
+          currentUser.data.user.email != product.Seller && product.currentState == 1 &&
           (
             <Descriptions.Item label="Buy Request" span={2}>
               <Button type='primary' onClick={handleBuyRequest}>Buy Request</Button>
