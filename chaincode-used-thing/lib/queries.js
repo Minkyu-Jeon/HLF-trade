@@ -22,8 +22,11 @@ class QueryUtils {
   * @param {String} issuer the CP issuer
   * @param {String} paperNumber commercial paper number
   */
-  async getAssetHistory(key) {
+  async getAssetHistory(SerialNumber, ProductName) {
+    let key = await this.ctx.stub.createCompositeKey(this.name, [SerialNumber, ProductName]);
+
     const resultsIterator = await this.ctx.stub.getHistoryForKey(key);
+    
     let results = await this.getAllResults(resultsIterator, true);
 
     return results;

@@ -28,6 +28,7 @@ function ProductRegisterPage(props) {
         layout='horizontal'
         onFinish={handleOnFinished}
         initialValues={{
+          serial_number: '',
           title: '',
           product_name: '',
           image_url: '',
@@ -35,6 +36,13 @@ function ProductRegisterPage(props) {
           description: ''
         }}
       >
+        <Form.Item label='SerialNumber' 
+          name='serial_number' 
+          required 
+          tooltip='This is a required field' 
+          rules={[{ required: true }]} >
+          <Input placeholder='SerialNumber' />
+        </Form.Item>
         <Form.Item label='Title' 
           name='title' 
           required 

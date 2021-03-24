@@ -32,7 +32,12 @@ const UsedThingController = () => {
 
         const contract = network.getContract(chainCodeName)
 
-        result = await contract.evaluateTransaction('Show', req.params.id)
+        let params = [
+          req.params.serial_number,
+          req.params.product_name
+        ]
+
+        result = await contract.evaluateTransaction('Show', ...params)
         if ( `${result}` !== '' ) {
           console.log(`*** Result: ${result.toString()}`)
         }
@@ -194,6 +199,7 @@ const UsedThingController = () => {
         const contract = network.getContract(chainCodeName)
 
         const createAssetParams = [
+          req.body.serial_number,
           req.body.category, 
           req.body.title, 
           req.body.product_name, 
@@ -245,11 +251,10 @@ const UsedThingController = () => {
 
         const contract = network.getContract(chainCodeName)
         
-        const params = [
-          req.params.id,
-          req.user.email,
+        let params = [
+          req.params.serial_number,
+          req.params.product_name
         ]
-        console.log(params)
 
         result = await contract.submitTransaction('BuyRequestAsset', ...params)
         console.log('*** Result: committed')
@@ -293,10 +298,10 @@ const UsedThingController = () => {
 
         const contract = network.getContract(chainCodeName)
         
-        const params = [
-          req.params.id,
+        let params = [
+          req.params.serial_number,
+          req.params.product_name
         ]
-        console.log(params)
 
         result = await contract.submitTransaction('SendAsset', ...params)
         console.log('*** Result: committed')
@@ -340,10 +345,10 @@ const UsedThingController = () => {
 
         const contract = network.getContract(chainCodeName)
         
-        const params = [
-          req.params.id,
+        let params = [
+          req.params.serial_number,
+          req.params.product_name
         ]
-        console.log(params)
 
         result = await contract.submitTransaction('ReceiveAsset', ...params)
         console.log('*** Result: committed')
@@ -387,10 +392,10 @@ const UsedThingController = () => {
 
         const contract = network.getContract(chainCodeName)
         
-        const params = [
-          req.params.id,
+        let params = [
+          req.params.serial_number,
+          req.params.product_name
         ]
-        console.log(params)
 
         result = await contract.submitTransaction('ConfirmAsset', ...params)
         console.log('*** Result: committed')

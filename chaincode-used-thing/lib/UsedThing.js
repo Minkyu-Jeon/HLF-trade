@@ -19,7 +19,7 @@ const utState = {
 class UsedThing extends State {
 
   constructor(obj) {
-    super(UsedThing.getClass(), [obj.Seller, obj.ProductName]);
+    super(UsedThing.getClass(), [obj.SerialNumber, obj.ProductName]);
     Object.assign(this, obj);
   }
 
@@ -126,8 +126,8 @@ class UsedThing extends State {
   /**
    * Factory method to create a used thing object
    */
-  static createInstance(Title, ProductName, Category, ImageUrl, Description, Price) {
-    return new UsedThing({ Title, ProductName, Category, ImageUrl, Description, Price });
+  static createInstance(SerialNumber, Title, ProductName, Category, ImageUrl, Description, Price) {
+    return new UsedThing({ SerialNumber, Title, ProductName, Category, ImageUrl, Description, Price });
   }
 
   static getClass() {

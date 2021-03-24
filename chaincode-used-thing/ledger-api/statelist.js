@@ -30,8 +30,6 @@ class StateList {
    * State object is serialized before writing.
    */
   async addState(state) {
-    console.log(`this.name: ${this.namee}`)
-    console.log(`state.getSplitKey: ${state.getSplitKey()}`)
     let key = this.ctx.stub.createCompositeKey(this.name, state.getSplitKey());
     let data = State.serialize(state);
     await this.ctx.stub.putState(key, data);

@@ -20,7 +20,7 @@ function ProductPage() {
       key: 'Title',
       dataIndex: 'Title',
       render: (text, record) => {
-        return <Link to={`/products/${record.key}`}>{text}</Link>
+        return <Link to={`/products/${record.SerialNumber}/${record.ProductName}`}>{text}</Link>
       }
     },
     {
@@ -42,9 +42,7 @@ function ProductPage() {
 
   const transformArray = (originAry) => {
     return originAry.map((item) => {
-      let char = item.Key.charAt(0)
-      let key = item.Key.split(char)[2]
-      return {key: key, ...item.Record}
+      return {key: item.Key, ...item.Record}
     })
   }
 

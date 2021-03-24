@@ -21,27 +21,27 @@ router.get(
 
 // Get a UsedThing
 router.get(
-  '/:id',
+  '/:serial_number/:product_name',
   UsedThingController.show
 )
 
 router.post(
-  '/:id/buy_request',
+  '/:serial_number/:product_name/buy_request',
   UsedThingController.buyRequest
 )
 
 router.post(
-  '/:id/send',
+  '/:serial_number/:product_name/send',
   UsedThingController.sendThing
 )
 
 router.post(
-  '/:id/receive',
+  '/:serial_number/:product_name/receive',
   UsedThingController.receiveThing
 )
 
 router.post(
-  '/:id/confirm',
+  '/:serial_number/:product_name/confirm',
   UsedThingController.confirmThing
 )
 

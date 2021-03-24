@@ -22,7 +22,7 @@ function App() {
         <Route exact path="/" component={Auth(LandingPage, null)} />
         <Route exact path="/products" component={Auth(ProductPage, true)} />
         <Route exact path="/products/new" component={Auth(ProductRegisterPage, true)} />
-        <Route exact path="/products/:id" component={Auth(ProductDetailPage, true)} />
+        <Route exact path="/products/:serial_number/:product_name" component={Auth(ProductDetailPage, true)} />
         <Route exact path="/login" component={Auth(LoginPage, false)} />
         <Route exact path="/register" component={Auth(RegisterPage, false)} />
       </Switch>

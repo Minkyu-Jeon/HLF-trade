@@ -10,8 +10,10 @@ function ProductDetailPage(props) {
   const { currentUser: currentUser } = useSelector((state) => state.user)
   const dispatch = useDispatch()
 
+  const pathParams = [props.match.params.serial_number, props.match.params.product_name]
+
   useEffect(() => {
-    dispatch(getUsedThing(props.match.params.id)).then(response => {
+    dispatch(getUsedThing(...pathParams)).then(response => {
       if ( response.payload.code != 200 ) {
         alert("an error occured")
         return
@@ -24,7 +26,7 @@ function ProductDetailPage(props) {
   const handleBuyRequest = (event) => {
     event.preventDefault()
     
-    dispatch(sendBuyRequest(props.match.params.id)).then(response => {
+    dispatch(sendBuyRequest(...pathParams)).then(response => {
       if ( response.payload.code != 200 ) {
         alert("an error occured")
         return

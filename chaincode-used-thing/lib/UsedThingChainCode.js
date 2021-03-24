@@ -27,15 +27,12 @@ class UsedThingChainCode extends Contract {
     return new UsedThingContext()
   }
 
-  async CreateAsset(ctx, category, title, product_name, image_url, description, price, seller) {
-    const asset = UsedThing.createInstance(title, product_name, category, image_url, description, price);
+  async CreateAsset(ctx, serialNumber, category, title, product_name, image_url, description, price, seller) {
+    const asset = UsedThing.createInstance(serialNumber, title, product_name, category, image_url, description, price);
 
     asset.setRegistered()
     
     let mspid = ctx.clientIdentity.getMSPID()
-
-    console.log(`mspid: ${mspid} =================================`)
-    console.log(`seller: ${seller} =================================`)
 
     asset.setSellerMSPID(mspid)
 
@@ -46,13 +43,18 @@ class UsedThingChainCode extends Contract {
     return asset;
   }
 
-  async Show(ctx, key) {
-    const asset = await ctx.thingList.getThing(key)
+  async Show(ctx, SerialNumber, ProductName) {
+    let assetKey = UsedThing.makeKey([SerialNumber, ProductName]);
+
+    let asset = await ctx.thingList.getThing(assetKey);
+
     return asset
   }
 
-  async BuyRequestAsset(ctx, key) {
-    const asset = await ctx.thingList.getThing(key)
+  async BuyRequestAsset(ctx, SerialNumber, ProductName) {
+    let assetKey = UsedThing.makeKey([SerialNumber, ProductName]);
+
+    let asset = await ctx.thingList.getThing(assetKey);
 
     const buyer = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
     
@@ -77,8 +79,10 @@ class UsedThingChainCode extends Contract {
     return asset
   }
 
-  async SendAsset(ctx, key) {
-    const asset = await ctx.thingList.getThing(key)
+  async SendAsset(ctx, SerialNumber, ProductName) {
+    let assetKey = UsedThing.makeKey([SerialNumber, ProductName]);
+
+    let asset = await ctx.thingList.getThing(assetKey);
 
     const buyer = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
 
@@ -97,8 +101,10 @@ class UsedThingChainCode extends Contract {
     return asset
   }
   
-  async ReceiveAsset(ctx, key) {
-    const asset = await ctx.thingList.getThing(key)
+  async ReceiveAsset(ctx, SerialNumber, ProductName) {
+    let assetKey = UsedThing.makeKey([SerialNumber, ProductName]);
+
+    let asset = await ctx.thingList.getThing(assetKey);
 
     const buyer = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
 
@@ -117,8 +123,10 @@ class UsedThingChainCode extends Contract {
     return asset
   }
 
-  async ConfirmAsset(ctx, key) {
-    const asset = await ctx.thingList.getThing(key)
+  async ConfirmAsset(ctx, SerialNumber, ProductName) {
+    let assetKey = UsedThing.makeKey([SerialNumber, ProductName]);
+
+    let asset = await ctx.thingList.getThing(assetKey);
 
     const buyer = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
 
@@ -135,9 +143,9 @@ class UsedThingChainCode extends Contract {
     return asset
   }
 
-  async queryHistory(ctx, key) {
+  async queryHistory(ctx, SerialNumber, ProductName) {
     let query = this.getQueryUtils(ctx)
-    let result = await query.getAssetHistory(key)
+    let result = await query.getAssetHistory(SerialNumber, ProductName)
     return result
   }
 

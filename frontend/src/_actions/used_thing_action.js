@@ -17,8 +17,8 @@ export function getUsedThingList() {
   }
 }
 
-export function getUsedThing(key) {
-  const request = axios.get(`/api/used_things/${key}`)
+export function getUsedThing(serial_number, product_name) {
+  const request = axios.get(`/api/used_things/${serial_number}/${product_name}`)
     .then(response => response.data)
     .catch(error => error.response.data)
 
@@ -39,8 +39,8 @@ export function registerUsedThing(body) {
   }
 }
 
-export function sendBuyRequest(key) {
-  const request = axios.post(`/api/used_things/${key}/buy_request`)
+export function sendBuyRequest(serial_number, product_name) {
+  const request = axios.post(`/api/used_things/${serial_number}/${product_name}/buy_request`)
     .then(response => response.data)
     .catch(error => error.response.data)
 

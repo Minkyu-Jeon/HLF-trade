@@ -15,6 +15,7 @@ class ThingList extends StateList {
 
   constructor(ctx) {
     super(ctx, 'org.example.thing');
+    console.log(`Initialized ThingList / this.name: ${this.name}`)
     this.use(UsedThing);
   }
 
