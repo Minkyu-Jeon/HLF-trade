@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Button, Descriptions } from 'antd'
 import Container from '../Container/Container'
 import { useDispatch, useSelector } from 'react-redux'
-import { getUsedThing } from '../../../_actions/used_thing_action'
+import { getUsedThing, sendBuyRequest } from '../../../_actions/used_thing_action'
 import { withRouter } from 'react-router-dom'
 
 function ProductDetailPage(props) {
@@ -20,6 +20,20 @@ function ProductDetailPage(props) {
       setProduct(response.payload.data)
     })
   }, [])
+
+  const handleBuyRequest = (event) => {
+    event.preventDefault()
+    
+    dispatch(sendBuyRequest(props.match.params.id)).then(response => {
+      if ( response.payload.code != 200 ) {
+        alert("an error occured")
+        return
+      } else {
+        alert('Your buy request is successfully sent')
+        props.history.push('/products')
+      }
+    })
+  }
 
   const backToList = (event) => {
     event.preventDefault()
@@ -41,7 +55,7 @@ function ProductDetailPage(props) {
           currentUser.data.user.email != product.Seller &&
           (
             <Descriptions.Item label="Buy Request" span={2}>
-              <Button type='primary'>Buy Request</Button>
+              <Button type='primary' onClick={handleBuyRequest}>Buy Request</Button>
             </Descriptions.Item>
           )
         }

@@ -2,7 +2,8 @@ import axios from 'axios'
 import {
   GET_USED_THING_LIST,
   GET_USED_THING,
-  SUBMIT_USED_THING_FORM
+  SUBMIT_USED_THING_FORM,
+  BUY_REQUEST
 } from './types'
 
 export function getUsedThingList() {
@@ -34,6 +35,17 @@ export function registerUsedThing(body) {
 
   return {
     type: SUBMIT_USED_THING_FORM,
+    payload: request
+  }
+}
+
+export function sendBuyRequest(key) {
+  const request = axios.post(`/api/used_things/${key}/buy_request`)
+    .then(response => response.data)
+    .catch(error => error.response.data)
+
+  return {
+    type: BUY_REQUEST,
     payload: request
   }
 }
