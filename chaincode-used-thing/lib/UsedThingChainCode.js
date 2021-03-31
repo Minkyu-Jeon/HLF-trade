@@ -5,6 +5,7 @@ const { Contract, Context } = require('fabric-contract-api');
 const UsedThing = require('./UsedThing')
 const ThingList = require('./UsedThingList')
 const QueryUtils = require('./queries')
+const seeds = require('./seed.json')
 
 class UsedThingContext extends Context {
   constructor() {
@@ -25,6 +26,34 @@ class UsedThingChainCode extends Contract {
 
   createContext() {
     return new UsedThingContext()
+  }
+
+  async SeedingLedger(ctx) {
+    for ( let item of seeds ) {
+      let { SerialNumber, Title, ProductName, Category, ImageUrl, Description, Price, Seller, MSPID } = item
+      
+      const asset = UsedThing.createInstance(SerialNumber, Title, ProductName, Category, ImageUrl, Description, Price);
+
+      asset.setRegistered()
+
+      asset.setSellerMSPID(MSPID)
+
+      asset.setSeller(Seller)
+
+      await ctx.thingList.addThing(asset)
+    }
+  }
+
+  async ClearLedger(ctx) {
+    for ( let state of [1,2,3,4,5] ) {
+      const results = await this.GetAllAssetsByState(ctx, state)
+
+      for ( let record of results ) {
+        console.log(`${record.Record.SerialNumber} ${record.Record.ProductName}`)
+        await this.DeleteAsset(ctx, record.Record.SerialNumber, record.Record.ProductName)
+      }
+    }
+    return true
   }
 
   async CreateAsset(ctx, serialNumber, category, title, product_name, image_url, description, price, seller) {
@@ -143,6 +172,14 @@ class UsedThingChainCode extends Contract {
     await ctx.thingList.updateThing(asset)
     
     return asset
+  }
+
+  async DeleteAsset(ctx, SerialNumber, ProductName) {
+    let key = ctx.stub.createCompositeKey('org.example.thing', [SerialNumber, ProductName]);
+    
+    await ctx.stub.deleteState(key);
+
+    return true
   }
 
   async queryHistory(ctx, SerialNumber, ProductName) {

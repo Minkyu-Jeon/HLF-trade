@@ -30,6 +30,10 @@ class ThingList extends StateList {
   async updateThing(thing) {
     return this.updateState(thing);
   }
+
+  async deleteThing(thing) {
+    return this.deleteState(thing)
+  }
 }
 
 
