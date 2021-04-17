@@ -21,6 +21,7 @@ class UsedThing extends State {
   constructor(obj) {
     super(UsedThing.getClass(), [obj.SerialNumber, obj.ProductName]);
     Object.assign(this, obj);
+    this.likeList = new Set([])
   }
 
   /**
@@ -53,6 +54,10 @@ class UsedThing extends State {
 
   getBuyerSPID() {
     return this.BuyerMSPID
+  }
+
+  getLikes() {
+    return this.likeList
   }
 
   setBuyerMSPID(mspID) {
@@ -105,6 +110,43 @@ class UsedThing extends State {
 
   isConfirmed() {
     return this.currentState === utState.CONFIRMED;
+  }
+
+  like(user) {
+    let result = false
+
+    if ( this.likeListEmpty() ) {
+      this.likeList = new Set([])
+    }
+
+    if ( !this.alreadyLiked(user) ) {
+      this.likeList.add(user)
+      result = true
+    }
+
+    return result
+  }
+
+  dislike(user) {
+    let result = false
+
+    if ( this.likeListEmpty() ) {
+      return result
+    }
+
+    if ( this.alreadyLiked(user) ) {
+      this.likeList.delete(user)
+    }
+
+    return result
+  }
+
+  likeListEmpty() {
+    return this.likeList === undefined || this.likeList.length == 0
+  }
+
+  alreadyLiked(user) {
+    return this.likeList.has(user)
   }
 
   static fromBuffer(buffer) {

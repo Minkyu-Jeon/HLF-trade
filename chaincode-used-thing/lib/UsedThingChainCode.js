@@ -80,6 +80,30 @@ class UsedThingChainCode extends Contract {
     return asset
   }
 
+  async LikeAsset(ctx, SerialNumber, ProductName) {
+    let asset = await this.Show(ctx, SerialNumber, ProductName)
+
+    const buyer = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
+
+    asset.like(buyer)
+
+    await ctx.thingList.updateThing(asset)
+
+    return asset
+  }
+
+  async DislikeAsset(ctx, SerialNumber, ProductName) {
+    let asset = await this.Show(ctx, SerialNumber, ProductName)
+
+    const buyer = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
+
+    asset.dislike(buyer)
+
+    await ctx.thingList.updateThing(asset)
+
+    return asset
+  }
+
   async BuyRequestAsset(ctx, SerialNumber, ProductName) {
     let assetKey = UsedThing.makeKey([SerialNumber, ProductName]);
 
