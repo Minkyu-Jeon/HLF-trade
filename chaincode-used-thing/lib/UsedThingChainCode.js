@@ -96,9 +96,7 @@ class UsedThingChainCode extends Contract {
 
     await ctx.thingList.addThingDelta(SerialNumber, ProductName, "likeList", "add", buyer)
 
-    let asset = await this.Show(ctx, SerialNumber, ProductName)
-
-    return asset
+    return true
   }
 
   async DislikeAsset(ctx, SerialNumber, ProductName) {
@@ -106,9 +104,7 @@ class UsedThingChainCode extends Contract {
 
     await ctx.thingList.addThingDelta(SerialNumber, ProductName, "likeList", "sub", buyer)
 
-    let asset = await this.Show(ctx, SerialNumber, ProductName)
-
-    return asset
+    return true
   }
 
   async BuyRequestAsset(ctx, SerialNumber, ProductName) {
