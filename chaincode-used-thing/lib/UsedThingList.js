@@ -37,6 +37,10 @@ class ThingList extends StateList {
   async addThingDelta(serialnumber, productname, attr, op, value) {
     return this.addStateDelta(serialnumber, productname, attr, op, value)
   }
+
+  async pruneThing(serialNumber, productName) {
+    return this.pruneDelta(serialNumber, productName)
+  }
 }
 
 

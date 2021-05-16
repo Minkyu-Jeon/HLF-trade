@@ -91,6 +91,12 @@ class UsedThingChainCode extends Contract {
     return asset
   }
 
+  async PruneAsset(ctx, SerialNumber, ProductName) {
+    await ctx.thingList.pruneThing(SerialNumber, ProductName)
+
+    return true
+  }
+
   async LikeAsset(ctx, SerialNumber, ProductName) {
     const buyer = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
 

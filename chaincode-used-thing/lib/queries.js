@@ -233,7 +233,11 @@ class QueryUtils {
       if (res.value && res.value.value.toString()) {
         let {objectType, attributes} = this.ctx.stub.splitCompositeKey(res.value.key)
         if ( attributes.length == 2 ) {
+          console.log(res.value.value.toString())
           original = State.deserializeClass(res.value.value, UsedThing);
+          if ( original.likeList != undefined && original.likeList.length != 0 ) {
+            likeList = new Set(original.likeList)
+          }
         }
 
         let SerialNumber = attributes[0];
@@ -259,12 +263,15 @@ class QueryUtils {
       }
       if (res.done) {
         await iterator.close();
+        original.likeList = Array.from(likeList)
         break;
       }
 
     }  // while true
 
-    original.likeList = likeList
+    console.log(original)
+
+
     return original
   }
 }

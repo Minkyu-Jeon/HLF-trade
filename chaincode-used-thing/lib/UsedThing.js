@@ -21,7 +21,9 @@ class UsedThing extends State {
   constructor(obj) {
     super(UsedThing.getClass(), [obj.SerialNumber, obj.ProductName]);
     Object.assign(this, obj);
-    this.likeList = new Set([])
+    if ( this.likeList == undefined ) {
+      this.likeList = []
+    }
   }
 
   /**

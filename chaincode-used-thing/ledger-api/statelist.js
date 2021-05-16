@@ -6,6 +6,7 @@
 
 'use strict';
 const State = require('./state.js');
+const UsedThing = require('../lib/UsedThing.js')
 
 /**
  * StateList provides a named virtual container for a set of ledger states.
@@ -68,6 +69,60 @@ class StateList {
     let strings = [serialNumber, productName, attr, op, value, txID]
     let key = this.ctx.stub.createCompositeKey(this.name, strings);
     await this.ctx.stub.putState(key, Buffer.from('\0'))
+  }
+
+  async pruneDelta(serialNumber, productName) {
+    let iterator = await this.ctx.stub.getStateByPartialCompositeKey(this.name, [serialNumber, productName]);
+    let likeList = new Set([])
+
+    let res = { done: false, value: null };
+    let original = null
+
+    while (true) {
+      res = await iterator.next();
+      if (res.value && res.value.value.toString()) {
+        let {objectType, attributes} = this.ctx.stub.splitCompositeKey(res.value.key)
+        if ( attributes.length == 2 ) {
+          original = State.deserializeClass(res.value.value, UsedThing);
+          if ( !original.likeListEmpty() ) {           
+            likeList = new Set(original.likeList)
+          }
+        }
+
+        let SerialNumber = attributes[0];
+        let ProductName = attributes[1];
+        let attr = attributes[2];
+        let operation = attributes[3];
+        let value = attributes[4];
+        let ts = attributes[5];
+        let tx = attributes[6];
+
+        switch (attr) {
+          case "likeList":
+            switch (operation) {
+              case "add":
+                likeList.add(value)
+                break;
+              case "sub":
+                likeList.delete(value)
+                break;
+            }
+            break;
+        }
+
+        let key = this.ctx.stub.createCompositeKey(this.name, attributes);
+        await this.ctx.stub.deleteState(key);
+      }
+      if (res.done) {
+        await iterator.close();
+        original.likeList = Array.from(likeList)
+        break;
+      }
+    }  // while true
+
+    let key = this.ctx.stub.createCompositeKey(this.name, [serialNumber, productName]);
+    let data = State.serialize(original);
+    await this.ctx.stub.putState(key, data);
   }
 
   async deleteState(state) {
