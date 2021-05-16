@@ -15,7 +15,6 @@ class ThingList extends StateList {
 
   constructor(ctx) {
     super(ctx, 'org.example.thing');
-    console.log(`Initialized ThingList / this.name: ${this.name}`)
     this.use(UsedThing);
   }
 
@@ -28,11 +27,15 @@ class ThingList extends StateList {
   }
 
   async updateThing(thing) {
-    return this.updateState(thing);
+    return this.updateState(thing)
   }
 
   async deleteThing(thing) {
     return this.deleteState(thing)
+  }
+
+  async addThingDelta(serialnumber, productname, attr, op, value) {
+    return this.addStateDelta(serialnumber, productname, attr, op, value)
   }
 }
 

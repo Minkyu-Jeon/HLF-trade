@@ -2,6 +2,8 @@
 SPDX-License-Identifier: Apache-2.0
 */
 'use strict';
+const State = require('../ledger-api/state.js');
+const UsedThing = require('./UsedThing.js');
 
 /**
  * Query Class for query functions such as history etc
@@ -220,5 +222,50 @@ class QueryUtils {
     }  // while true
   }
 
+  async getCalculatedDelta(iterator) {
+    let likeList = new Set([])
+    
+    let res = { done: false, value: null };
+    let original = {}
+
+    while (true) {
+      res = await iterator.next();
+      if (res.value && res.value.value.toString()) {
+        let {objectType, attributes} = this.ctx.stub.splitCompositeKey(res.value.key)
+        if ( attributes.length == 2 ) {
+          original = State.deserializeClass(res.value.value, UsedThing);
+        }
+
+        let SerialNumber = attributes[0];
+        let ProductName = attributes[1];
+        let attr = attributes[2];
+        let operation = attributes[3];
+        let value = attributes[4];
+        let ts = attributes[5];
+        let tx = attributes[6];
+
+        switch (attr) {
+          case "likeList":
+            switch (operation) {
+              case "add":
+                likeList.add(value)
+                break;
+              case "sub":
+                likeList.delete(value)
+                break;
+            }
+            break;
+        }
+      }
+      if (res.done) {
+        await iterator.close();
+        break;
+      }
+
+    }  // while true
+
+    original.likeList = likeList
+    return original
+  }
 }
 module.exports = QueryUtils;

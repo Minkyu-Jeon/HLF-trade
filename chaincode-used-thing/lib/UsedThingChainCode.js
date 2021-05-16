@@ -18,6 +18,7 @@ class UsedThingChainCode extends Contract {
 
   constructor() {
     super('org.example.used_thing')
+    this.ts = new Date()
   }
 
   async InitLedger(ctx) {
@@ -72,34 +73,40 @@ class UsedThingChainCode extends Contract {
     return asset;
   }
 
-  async Show(ctx, SerialNumber, ProductName) {
+  async ShowOriginal(ctx, SerialNumber, ProductName) {
     let assetKey = UsedThing.makeKey([SerialNumber, ProductName]);
 
     let asset = await ctx.thingList.getThing(assetKey);
 
     return asset
   }
+  
+  async Show(ctx, SerialNumber, ProductName) {
+    let deltaResultItorator = await ctx.stub.getStateByPartialCompositeKey(ctx.thingList.name, [SerialNumber, ProductName]);
+    
+    let query = this.getQueryUtils(ctx)
+
+    let asset = query.getCalculatedDelta(deltaResultItorator)
+    
+    return asset
+  }
 
   async LikeAsset(ctx, SerialNumber, ProductName) {
-    let asset = await this.Show(ctx, SerialNumber, ProductName)
-
     const buyer = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
 
-    asset.like(buyer)
+    await ctx.thingList.addThingDelta(SerialNumber, ProductName, "likeList", "add", buyer)
 
-    await ctx.thingList.updateThing(asset)
+    let asset = await this.Show(ctx, SerialNumber, ProductName)
 
     return asset
   }
 
   async DislikeAsset(ctx, SerialNumber, ProductName) {
-    let asset = await this.Show(ctx, SerialNumber, ProductName)
-
     const buyer = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
 
-    asset.dislike(buyer)
+    await ctx.thingList.addThingDelta(SerialNumber, ProductName, "likeList", "sub", buyer)
 
-    await ctx.thingList.updateThing(asset)
+    let asset = await this.Show(ctx, SerialNumber, ProductName)
 
     return asset
   }
@@ -160,16 +167,6 @@ class UsedThingChainCode extends Contract {
     let asset = await ctx.thingList.getThing(assetKey);
 
     const buyer = ctx.clientIdentity.getAttributeValue('hf.EnrollmentID')
-
-    if ( !asset.isSent() ) {
-      throw new Error(`currentState must be sent`)
-    }
-
-    if ( asset.getBuyer() != buyer ) {
-      throw new Error(`only buyer invoke this contract`)
-    }
-
-    asset.setReceived()
 
     await ctx.thingList.updateThing(asset)
     

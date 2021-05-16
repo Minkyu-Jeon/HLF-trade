@@ -63,6 +63,13 @@ class StateList {
     await this.ctx.stub.putState(key, data);
   }
 
+  async addStateDelta(serialNumber, productName, attr, op, value) {
+    let txID = this.ctx.stub.getTxID()
+    let strings = [serialNumber, productName, attr, op, value, txID]
+    let key = this.ctx.stub.createCompositeKey(this.name, strings);
+    await this.ctx.stub.putState(key, Buffer.from('\0'))
+  }
+
   async deleteState(state) {
     let key = this.ctx.stub.createCompositeKey(this.name, state.getSplitKey());
     await this.ctx.stub.deleteState(key);
